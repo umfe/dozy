@@ -1,0 +1,30 @@
+{
+	"name": "dozy",
+	"version": "1.0.0",
+	"description": "My shared typescript utilities.",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"build": "npm run clean&tsc -p tsconfig.json",
+		"clean": "rimraf dist",
+		"prepare": "npm run build"
+	},
+	"author": "xaidozy",
+	"license": "ISC",
+	"devDependencies": {
+		"typescript": "^5.4.2",
+		"rimraf": "^5.0.0"
+	}
+}

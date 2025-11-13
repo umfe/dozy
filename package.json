@@ -17,8 +17,8 @@
 		"README.md"
 	],
 	"scripts": {
+		"clean": "rimraf dist || rmdir /s /q dist",
 		"build": "npm run clean&tsc -p tsconfig.json",
-		"clean": "rimraf dist",
 		"prepare": "npm run build"
 	},
 	"author": "xaidozy",

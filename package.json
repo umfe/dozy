@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -18,13 +18,19 @@
 	],
 	"scripts": {
 		"clean": "rimraf dist || rmdir /s /q dist",
-		"build": "npm run clean&tsc -p tsconfig.json",
+		"build:plain": "npm run clean && tsc -p tsconfig.json",
+		"build": "npm run build:plain && node scripts/obfuscate.cjs",
 		"prepare": "npm run build"
 	},
 	"author": "xaidozy",
 	"license": "ISC",
 	"devDependencies": {
-		"typescript": "^5.4.2",
-		"rimraf": "^5.0.0"
+		"@types/node": "^24.10.1",
+		"javascript-obfuscator": "^4.2.0",
+		"rimraf": "^5.0.0",
+		"typescript": "^5.4.2"
+	},
+	"dependencies": {
+		"nanoid": "^5.1.6"
 	}
 }

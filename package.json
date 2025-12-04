@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -14,7 +14,8 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"README.md",
+		"node_modules"
 	],
 	"scripts": {
 		"clean": "rimraf dist || rmdir /s /q dist",

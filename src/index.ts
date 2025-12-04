@@ -9,4 +9,4 @@ import * as Cryptojs from 'crypto-js'
 export { Cryptojs }
 export * from 'axios'
 
-export const VERSION = '1.0.5'
+export const VERSION = '1.0.7'

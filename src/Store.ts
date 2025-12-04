@@ -1,3 +1,5 @@
+import { dozy } from './Dozy.js'
+
 // --- JSON ---
 export const $jsonParse = JSON.parse
 export const $jsonStringify = JSON.stringify
@@ -60,6 +62,17 @@ export const $Response = typeof Response === 'undefined' ? undefined : Response
 
 // --- Console ---
 export const $console = console // Provide direct access to original console object
+console.log = (...args: any[]) => {
+	if (!args || args.length === 0) return
+	if (args.length === 1 && typeof args[0] === 'string') {
+		const msg = args[0]
+		// .includes('[DEBUG] cheese')
+		for (const filter of dozy.config.logFilters) {
+			if (filter(msg)) return
+		}
+	}
+	$console.log(...args)
+}
 const $log = <T>(a?: T, ...x: any[]) => {
 	console.log(a, ...x) // Allow user to override console.log
 	return a

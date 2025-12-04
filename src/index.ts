@@ -7,3 +7,4 @@ import * as l from 'lodash'
 export { l }
 import * as Cryptojs from 'crypto-js'
 export { Cryptojs }
+export * from 'axios'

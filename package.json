@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -33,6 +33,7 @@
 	"dependencies": {
 		"@types/crypto-js": "^4.2.2",
 		"@types/lodash": "^4.17.21",
+		"axios": "^1.13.2",
 		"crypto-js": "^4.2.0",
 		"lodash": "^4.17.21",
 		"nanoid": "^5.1.6"

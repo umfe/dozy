@@ -1,7 +1,42 @@
 import { nanoid } from 'nanoid'
 
+export function web$setPathTarget(s: string) {
+	if (!s.startsWith('/')) s = '/' + s
+	history.replaceState(null, '', s)
+}
+export function web$pathStartData() {
+	let o = {
+		href: '',
+		origin: '',
+		target: '',
+		host: '',
+		path: '',
+		search: '',
+		standardJump: false,
+	}
+	let current = window.location.href
+	o.href = current
+	let index = current.indexOf('/', current.indexOf(':') + 3)
+	o.origin = current.substring(0, index)
+	o.target = current.substring(index)
+	o.host = o.origin.substring(o.origin.indexOf(':') + 3)
+	let hash = window.location.hash
+	o.standardJump = hash.startsWith('#/')
+	if (o.standardJump) {
+		o.target = hash.substring(1)
+		web$setPathTarget(o.target)
+	}
+	let xx = window.location.pathname
+	xx = xx.startsWith('/') ? xx.substring(1) : xx
+	if (xx.endsWith('.html')) xx = xx.substring(0, xx.length - 5)
+	if (xx.endsWith('.htm')) xx = xx.substring(0, xx.length - 4)
+	if (xx.endsWith('/')) xx = xx.substring(0, xx.length - 1)
+	o.path = xx
+	let x = window.location.search
+	o.search = !x.startsWith('?') || x.length < 2 ? '' : x.substring(1)
+	return o
+}
 let failed = false
-// allowedOrigins?: string[]
 export function web$enableProdProtector() {
 	if (typeof window === 'undefined') return
 	document.oncontextmenu = function (event: any) {
@@ -30,7 +65,7 @@ export function web$enableProdProtector() {
 	setInterval(() => {
 		if (
 			(() => {
-				const threshold = Number(430) && 800
+				const threshold = Number(430) && 900
 				let dw = window.outerWidth - window.innerWidth
 				let dh = window.outerHeight - window.innerHeight
 				const widthThreshold = dw > threshold
@@ -48,7 +83,6 @@ export function web$enableProdProtector() {
 		}
 	}, 80)
 }
-
 export function web$enableHttpsRedirect() {
 	if (typeof window !== 'undefined') {
 		const { protocol, hostname, href } = window.location
@@ -61,7 +95,6 @@ export function web$enableHttpsRedirect() {
 			window.location.href = href.replace(/^http:/, 'https:')
 	}
 }
-
 export function web$redirectToDomain(newDomain: string) {
 	if (typeof window === 'undefined') return
 	const { pathname, search, hash } = window.location

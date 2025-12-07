@@ -3,10 +3,14 @@ export * from './Functions.js'
 export * from './WebFunctions.js'
 export * from './Store.js'
 
-import * as l from 'lodash'
-export { l }
-import * as Cryptojs from 'crypto-js'
-export { Cryptojs }
 export * from 'axios'
+import axios from 'axios'
+export { axios }
 
-export const VERSION = '1.0.7'
+import l from 'lodash'
+export { l }
+
+import Cryptojs from 'crypto-js'
+export { Cryptojs }
+
+export const DOZY = '1.0.15'

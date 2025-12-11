@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.15",
+	"version": "1.0.16",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
@@ -11,7 +11,8 @@
 			"require": "./dist/index.js",
 			"default": "./dist/index.js"
 		},
-		"./package.json": "./package.json"
+		"./package.json": "./package.json",
+		"./cover": "./dist/cover.css"
 	},
 	"files": [
 		"dist",
@@ -22,7 +23,7 @@
 		"build:types": "tsc -p tsconfig.json --emitDeclarationOnly --declaration --outDir dist",
 		"build:types:bundle": "dts-bundle-generator -o dist/index.d.ts src/index.ts --inline-declare-externals --no-banner",
 		"build:bundle": "esbuild src/index.ts --bundle --platform=browser --format=esm --target=es2020 --outfile=dist/index.js --sourcemap --minify",
-		"build": "npm run clean && npm run build:types && npm run build:types:bundle && npm run build:bundle",
+		"build": "npm run clean && npm run build:types && npm run build:types:bundle && npm run build:bundle && node scripts/copy-assets.js",
 		"prepare": "npm run build"
 	},
 	"author": "xaidozy",

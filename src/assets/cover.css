@@ -1,0 +1,473 @@
+/* =========================================
+   CSS Reset and Global Styles
+   Project: xaidozy
+   ========================================= */
+
+/* =======================
+   1. 字体定义 (Font Face)
+   ======================= */
+@font-face {
+	font-family: 'xaifont';
+	src: url('@/assets/fonts/xaifont.ttf') format('truetype');
+}
+
+/* @font-face {
+	font-family: 'defaultFont';
+	src: url('your-font-file-path.woff2') format('woff2'),
+		url('your-font-file-path.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+} 
+*/
+
+/* =======================
+   2. 核心盒模型与基础重置 (Core Reset)
+   ======================= */
+
+/* 1. 防止 padding 和 border 影响元素宽度 (Box-sizing)
+   2. 移除所有元素的默认 margin 和 padding
+   3. 重置所有边框样式
+*/
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+	box-sizing: border-box; /* 1 */
+	margin: 0; /* 2 */
+	padding: 0; /* 2 */
+	border: 0 solid; /* 3 */
+}
+
+/* =======================
+   3. 全局通用样式 (Global Styles)
+   ======================= */
+
+/* 根元素设置 */
+:root {
+	font-synthesis: none; /* 禁止浏览器合成粗体/斜体 */
+	text-rendering: optimizeLegibility; /* 优化文本渲染清晰度 */
+	-webkit-font-smoothing: antialiased; /* WebKit字体抗锯齿 */
+	-moz-osx-font-smoothing: grayscale; /* Firefox字体抗锯齿 */
+
+	--base-font-size: 16;
+	--px: calc(1 / 16 * 1rem);
+}
+
+/* HTML 基础设置 
+   1. 统一行高
+   2. iOS 字体大小调整修正
+   3. 设置更易读的 Tab 宽度
+   4. 默认无衬线字体栈
+   5. 禁用 iOS 点击高亮
+*/
+html {
+	font-size: calc(var(--base-font-size) * 1px);
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: hidden; /* 防止 HTML 层滚动，通常由 Body 处理 */
+
+	line-height: 1.5; /* 1 */
+	-webkit-text-size-adjust: 100%; /* 2 */
+	tab-size: 4; /* 3 */
+
+	/* 字体栈 */
+	font-family: xaifont, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif; /* 4 */
+
+	font-feature-settings: normal;
+	font-variation-settings: normal;
+	-webkit-tap-highlight-color: transparent; /* 5 */
+}
+
+/* Body 基础设置 */
+body {
+	width: 100%;
+	height: 100%;
+
+	/* 滚动行为 */
+	overflow-y: scroll;
+	overflow-x: hidden;
+
+	/* 用户交互 */
+	user-select: none;
+
+	/* 背景设置 */
+	color: #fff;
+	background-color: #000;
+	background-attachment: fixed;
+	background-size: cover;
+	background-blend-mode: hard-light;
+}
+
+/* React根元素 */
+div#root {
+	width: 100%;
+	height: 100%;
+}
+
+/* 全局激进重置 (Aggressive Global Reset)
+   注意：此处包含所有元素的过渡动画、文字阴影和背景默认行为。
+   这对性能有一定影响，属于特定视觉风格需求。
+*/
+*,
+*::before,
+*::after {
+	text-shadow: 0 var(--px) var(--px) #000;
+	user-select: inherit;
+
+	/* 背景图默认行为 */
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center center;
+	background-attachment: scroll;
+
+	/* 排版行为 */
+	text-align: justify;
+	vertical-align: baseline;
+
+	/* 换行行为 */
+	word-wrap: break-word;
+	word-break: break-all;
+	overflow-wrap: break-word;
+	white-space: normal;
+
+	/* 全局过渡动画 */
+	transition: all 0.1s linear;
+}
+
+/* 选中态样式 */
+*::selection {
+	background-color: #222;
+	color: #fff;
+}
+
+/* =======================
+   4. 滚动条样式 (Scrollbars)
+   ======================= */
+
+/* WebKit 浏览器 (Chrome / Edge / Safari) */
+::-webkit-scrollbar {
+	width: 8px; /* 垂直滚动条宽度 */
+	height: 8px; /* 水平滚动条高度 */
+}
+::-webkit-scrollbar-track {
+	background: #888; /* 轨道背景 */
+}
+::-webkit-scrollbar-thumb {
+	background-color: #ccc; /* 滑块颜色 */
+	border-radius: 9999px; /* 大圆角 */
+	border: 2px solid transparent; /*以此模拟内边距效果 */
+	background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: #fff; /* 悬停颜色 */
+}
+
+/* Firefox 浏览器 */
+* {
+	scrollbar-width: thin; /* 细滚动条 */
+	scrollbar-color: #ccc #888; /* 滑块颜色 轨道背景 */
+}
+
+/* =======================
+   5. 排版与文本 (Typography)
+   ======================= */
+
+/* 重置标题字号和字重，以便由类名控制 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-size: inherit;
+	font-weight: inherit;
+	user-select: text;
+}
+
+/* 文本容器允许选择 */
+p,
+blockquote,
+figure,
+figcaption,
+dl,
+dt,
+dd,
+ol,
+ul,
+li {
+	user-select: text;
+}
+
+/* 分割线重置 */
+hr {
+	height: 0;
+	color: inherit;
+	border-top-width: 1em;
+}
+
+/* 缩写下划线样式 */
+abbr:where([title]) {
+	-webkit-text-decoration: underline dotted;
+	text-decoration: underline dotted;
+}
+
+/* 链接样式重置 */
+a {
+	color: inherit;
+	text-decoration: none; /* 移除下划线 */
+	-webkit-text-decoration: inherit;
+	border: 0;
+	user-select: text;
+	cursor: pointer;
+}
+a:hover,
+a:active {
+	color: inherit;
+}
+
+/* 加粗标签标准化 */
+b,
+strong {
+	font-weight: bolder;
+}
+
+/* 代码字体统一化 */
+code,
+kbd,
+samp,
+pre {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+		'Courier New', monospace;
+	font-feature-settings: normal;
+	font-variation-settings: normal;
+	font-size: 1em;
+}
+
+/* 小号字体 */
+small {
+	font-size: 80%;
+}
+
+/* 上标与下标 (防止影响行高) */
+sub,
+sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+sub {
+	bottom: -0.25em;
+}
+sup {
+	top: -0.5em;
+}
+
+/* =======================
+   6. 区块与布局元素 (Layout & Blocks)
+   ======================= */
+
+/* HTML5 块级元素重置 */
+article,
+section,
+header,
+aside,
+footer,
+nav,
+main,
+figure,
+figcaption,
+li {
+	display: block;
+	user-select: text;
+}
+
+/* 列表重置 */
+ol,
+ul,
+menu {
+	list-style: none;
+}
+
+/* 详情摘要 */
+summary {
+	display: list-item;
+}
+
+/* 表格重置 */
+table {
+	border-collapse: collapse; /* 合并边框 */
+	border-spacing: 0;
+	text-indent: 0; /* 修复 Chrome/Safari 表格缩进问题 */
+	border-color: inherit; /* 继承边框颜色 */
+}
+
+/* =======================
+   7. 媒体元素 (Media: Images & Video)
+   ======================= */
+
+/* 基础行内块设定 */
+span,
+img {
+	display: inline-block;
+}
+
+/* 媒体元素块级化与响应式 
+   注意：这里的 display: block 会覆盖上面 img 的 inline-block，
+   除非有更具体的选择器。
+*/
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+	display: block;
+	vertical-align: middle;
+	border: 0;
+}
+
+/* 响应式尺寸限制 */
+img,
+video {
+	max-width: 100%;
+	height: auto;
+}
+
+/* =======================
+   8. 表单元素 (Forms)
+   ======================= */
+
+/* 基础表单字体与重置 */
+button,
+input,
+select,
+optgroup,
+textarea,
+::file-selector-button {
+	font: inherit;
+	font-feature-settings: inherit;
+	font-variation-settings: inherit;
+	letter-spacing: inherit;
+	color: inherit;
+	border-radius: 0;
+	background-color: transparent;
+	opacity: 1;
+	outline: none; /* 移除默认轮廓线 */
+}
+
+/* 文本域设置 */
+textarea {
+	resize: none; /* 禁止拖拽改变大小 */
+	overflow-y: scroll;
+	overflow-x: auto;
+}
+
+/* 按钮与输入框的外观修正 (iOS) */
+button,
+input:where([type='button'], [type='reset'], [type='submit']),
+::file-selector-button {
+	appearance: button;
+}
+
+/* 恢复 Select 中 optgroup 的字重 */
+:where(select:is([multiple], [size])) optgroup {
+	font-weight: bolder;
+}
+
+/* 恢复 Select 中 option 的缩进 */
+:where(select:is([multiple], [size])) optgroup option {
+	padding-inline-start: 20px;
+}
+
+/* 文件上传按钮间距 */
+::file-selector-button {
+	margin-inline-end: 4px;
+}
+
+/* Firefox Focus 样式 */
+:-moz-focusring {
+	outline: auto;
+}
+
+/* 进度条垂直对齐 */
+progress {
+	vertical-align: baseline;
+}
+
+/* Placeholder (占位符) 样式
+   修复 Firefox 透明度问题，并设置颜色 
+*/
+::placeholder {
+	opacity: 1;
+}
+@supports (not (-webkit-appearance: -apple-pay-button)) or (contain-intrinsic-size: 1px) {
+	::placeholder {
+		color: color-mix(in oklab, currentcolor 50%, transparent);
+	}
+}
+
+/* Webkit 表单控件特定修饰清除 
+*/
+
+/* 移除 macOS Chrome/Safari 的搜索框装饰 */
+::-webkit-search-decoration {
+	-webkit-appearance: none;
+}
+
+/* 修复 iOS Safari 日期时间输入框高度和对齐 */
+::-webkit-date-and-time-value {
+	min-height: 1lh;
+	text-align: inherit;
+}
+
+/* macOS Safari 日期输入框显示修正 */
+::-webkit-datetime-edit {
+	display: inline-flex;
+}
+
+/* 清除日期输入框的多余 padding */
+::-webkit-datetime-edit-fields-wrapper {
+	padding: 0;
+}
+::-webkit-datetime-edit,
+::-webkit-datetime-edit-year-field,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-hour-field,
+::-webkit-datetime-edit-minute-field,
+::-webkit-datetime-edit-second-field,
+::-webkit-datetime-edit-millisecond-field,
+::-webkit-datetime-edit-meridiem-field {
+	padding-block: 0;
+}
+
+/* 修复 Chrome 中 datalist 下拉箭头对齐 */
+::-webkit-calendar-picker-indicator {
+	line-height: 1;
+}
+
+/* 修复 Safari 中数字输入框按钮的光标 */
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+	height: auto;
+}
+
+/* 移除 Firefox 中无效输入的额外样式 */
+:-moz-ui-invalid {
+	box-shadow: none;
+}
+
+/* =======================
+   9. 工具类与杂项 (Utilities & Misc)
+   ======================= */
+
+/* 强制隐藏 hidden 属性元素 */
+[hidden]:where(:not([hidden='until-found'])) {
+	display: none !important;
+}

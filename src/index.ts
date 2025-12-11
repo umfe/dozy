@@ -13,4 +13,4 @@ export { l }
 import Cryptojs from 'crypto-js'
 export { Cryptojs }
 
-export const DOZY = '1.0.15'
+export const DOZY = '1.0.16'

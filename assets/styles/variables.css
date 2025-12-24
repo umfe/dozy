@@ -1,0 +1,15 @@
+:root {
+	--primary: #ea9580;
+	--primary-light: #ffdad2; /* 卡片,框等的背景颜色 */
+	--primary-dark: #c96f58; /* 卡片,框等内部input,text label的背景 */
+
+	--text: #ffd700; /* 文本颜色 */
+	--back: #332e00;
+	--active: #5ff; /* 这个目前也作为border color */
+	--deactive: #007070;
+	--border: #a50;
+
+	--success: #5f5;
+	--danger: #f55;
+	--warning: #fa0;
+}

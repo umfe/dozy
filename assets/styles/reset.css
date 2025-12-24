@@ -1,3 +1,4 @@
+/* 自己去设置滚动吧 */
 /* =========================================
    CSS Reset and Global Styles
    Project: xaidozy
@@ -8,7 +9,9 @@
    ======================= */
 @font-face {
 	font-family: 'xaifont';
-	src: url('@/assets/fonts/xaifont.ttf') format('truetype');
+	src: url('/fonts/xaifont.woff2') format('woff2'),
+		url('https://xaidozy.github.io/fonts/xaifont.woff2') format('woff2');
+	font-display: swap;
 }
 
 /* @font-face {
@@ -37,6 +40,9 @@
 	margin: 0; /* 2 */
 	padding: 0; /* 2 */
 	border: 0 solid; /* 3 */
+
+	font-family: inherit !important;
+	font-size: inherit !important;
 }
 
 /* =======================
@@ -50,8 +56,7 @@
 	-webkit-font-smoothing: antialiased; /* WebKit字体抗锯齿 */
 	-moz-osx-font-smoothing: grayscale; /* Firefox字体抗锯齿 */
 
-	--base-font-size: 16;
-	--px: calc(1 / 16 * 1rem);
+	--status-bar-height: 0;
 }
 
 /* HTML 基础设置 
@@ -62,7 +67,7 @@
    5. 禁用 iOS 点击高亮
 */
 html {
-	font-size: calc(var(--base-font-size) * 1px);
+	font-size: 16px !important;
 	width: 100%;
 	height: 100%;
 	overflow-x: hidden;
@@ -74,7 +79,7 @@ html {
 
 	/* 字体栈 */
 	font-family: xaifont, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif,
-		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif; /* 4 */
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif !important; /* 4 */
 
 	font-feature-settings: normal;
 	font-variation-settings: normal;
@@ -101,11 +106,7 @@ body {
 	background-blend-mode: hard-light;
 }
 
-/* React根元素 */
-div#root {
-	width: 100%;
-	height: 100%;
-}
+/* 根元素 */
 
 /* 全局激进重置 (Aggressive Global Reset)
    注意：此处包含所有元素的过渡动画、文字阴影和背景默认行为。
@@ -114,7 +115,7 @@ div#root {
 *,
 *::before,
 *::after {
-	text-shadow: 0 var(--px) var(--px) #000;
+	text-shadow: 0 1px 1px #000;
 	user-select: inherit;
 
 	/* 背景图默认行为 */
@@ -149,27 +150,39 @@ div#root {
 
 /* WebKit 浏览器 (Chrome / Edge / Safari) */
 ::-webkit-scrollbar {
+	width: 0px; /* 隐藏垂直滚动条 */
+	height: 0px; /* 隐藏水平滚动条 */
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+	background: transparent; /* 轨道和滑块透明 */
+}
+* {
+	scrollbar-width: none; /* Firefox 隐藏滚动条 */
+}
+/* @media (pointer: coarse) and (hover: none) { */
+.scrollbar::-webkit-scrollbar {
 	width: 8px; /* 垂直滚动条宽度 */
 	height: 8px; /* 水平滚动条高度 */
 }
-::-webkit-scrollbar-track {
+.scrollbar::-webkit-scrollbar-track {
 	background: #888; /* 轨道背景 */
 }
-::-webkit-scrollbar-thumb {
+.scrollbar::-webkit-scrollbar-thumb {
 	background-color: #ccc; /* 滑块颜色 */
 	border-radius: 9999px; /* 大圆角 */
 	border: 2px solid transparent; /*以此模拟内边距效果 */
 	background-clip: padding-box;
 }
-::-webkit-scrollbar-thumb:hover {
+.scrollbar::-webkit-scrollbar-thumb:hover {
 	background-color: #fff; /* 悬停颜色 */
 }
-
 /* Firefox 浏览器 */
-* {
+.scrollbar {
 	scrollbar-width: thin; /* 细滚动条 */
 	scrollbar-color: #ccc #888; /* 滑块颜色 轨道背景 */
 }
+/* } */
 
 /* =======================
    5. 排版与文本 (Typography)
@@ -205,7 +218,7 @@ li {
 hr {
 	height: 0;
 	color: inherit;
-	border-top-width: 1em;
+	border-top-width: 0.1em;
 }
 
 /* 缩写下划线样式 */

@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.16",
+	"version": "1.0.18",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
@@ -12,10 +12,12 @@
 			"default": "./dist/index.js"
 		},
 		"./package.json": "./package.json",
-		"./cover": "./dist/cover.css"
+		"./cover": "./assets/cover.css",
+		"./cover-vanilla": "./assets/cover-vanilla.css"
 	},
 	"files": [
 		"dist",
+		"assets",
 		"README.md"
 	],
 	"scripts": {
@@ -38,10 +40,11 @@
 	},
 	"dependencies": {
 		"@types/crypto-js": "^4.2.2",
-		"@types/lodash": "^4.17.21",
+		"@types/lodash-es": "^4.17.12",
 		"axios": "^1.13.2",
 		"crypto-js": "^4.2.0",
-		"lodash": "^4.17.21",
-		"nanoid": "^5.1.6"
+		"lodash-es": "^4.17.22",
+		"nanoid": "^5.1.6",
+		"zod": "^4.2.1"
 	}
 }

@@ -1,16 +1,20 @@
 export * from './Dozy.js'
-export * from './Functions.js'
-export * from './WebFunctions.js'
-export * from './Store.js'
+export * from './Functions'
+export * from './WebFunctions'
+export * from './modules/Store'
+export * from './modules/useScale'
+export * from './modules/XCode'
+export * from './modules/Interface'
 
 export * from 'axios'
-import axios from 'axios'
-export { axios }
+export { default as axios } from 'axios'
 
-import l from 'lodash'
+import * as l from 'lodash-es'
 export { l }
 
-import Cryptojs from 'crypto-js'
-export { Cryptojs }
+export { default as Cryptojs } from 'crypto-js'
 
-export const DOZY = '1.0.16'
+export * from 'zod'
+export { default as z } from 'zod'
+
+export const DOZY = '1.0.18'

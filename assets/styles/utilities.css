@@ -1,0 +1,49 @@
+@utility xbase {
+	@apply text-(--text)!;
+}
+
+@utility frame-base {
+	@apply xbase;
+	@apply bg-(--primary)!;
+	@apply shadow-[0_0_2px_0_#000]!;
+}
+
+@utility frame {
+	@apply frame-base;
+	@apply px-2! py-1! rounded-lg!;
+}
+
+@utility with-border {
+	@apply rounded-lg! border-2! border-(--border)!;
+}
+
+@utility border-frame {
+	@apply frame;
+	@apply border-2! border-(--active)!;
+}
+
+@utility inlineb {
+	@apply mx-0.5!;
+	@apply inline-block;
+}
+
+@utility scroller {
+	@apply overflow-y-scroll! overflow-x-hidden! h-full!;
+}
+
+@utility nowrap {
+	@apply whitespace-nowrap!;
+}
+
+@utility even-wrapper {
+	@apply flex! flex-row! justify-center! items-center! gap-4! p-4!;
+}
+
+@utility container {
+	@apply border-frame! px-5! py-3! rounded-2xl!;
+}
+
+/* @utility contained {
+	@apply bg-(--primary-light)!;
+	@apply p-3! rounded-xl!;
+} */

@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.21",
+	"version": "1.0.22",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
@@ -13,6 +13,7 @@
 		},
 		"./package.json": "./package.json",
 		"./cover": "./assets/cover.css",
+		"./shadcn": "./assets/shadcn.css",
 		"./cover-vanilla": "./assets/cover-vanilla.css"
 	},
 	"files": [

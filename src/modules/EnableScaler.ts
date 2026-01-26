@@ -1,5 +1,4 @@
-import { update } from 'lodash-es'
-import { l } from '..'
+import { l } from ".."
 
 /*
 <div ref={outerContainer current}>
@@ -11,7 +10,8 @@ import { l } from '..'
 export type ScaleComputer = undefined | ((scaler: Scaler) => number)
 export type ScaleIniter = (scaler: Scaler) => void
 class Scaler {
-	element?: HTMLElement
+	heightElement!: HTMLElement
+	widthElement!: HTMLElement
 	#mainScale = 1
 	set mainScale(val: number) {
 		this.#mainScale = val || 1
@@ -41,9 +41,9 @@ class Scaler {
 	}
 }
 
-export function useScaler(outerContainer: HTMLElement, initer?: ScaleIniter) {
+export function enableScaler(outerContainer: HTMLElement, initer?: ScaleIniter, innerContainer?: HTMLElement) {
 	if (typeof window === 'undefined') return
-	const innerContainer = outerContainer.children[0]
+	innerContainer ||= outerContainer.children[0] as any
 	if (!innerContainer || !(innerContainer instanceof HTMLElement))
 		throw 'please make the right constructure'
 	const scaler = new Scaler(innerContainer)
@@ -56,12 +56,15 @@ export function useScaler(outerContainer: HTMLElement, initer?: ScaleIniter) {
 	inner.width = '320px'
 	inner.height = 'fit-content'
 	inner.transformOrigin = 'top center'
+	inner.marginLeft = 'auto'
+	inner.marginRight = 'auto'
 	const resizer = () => {
 		if (scaler.scaleComputer) {
 			scaler.mainScale = scaler.scaleComputer(scaler)
 		}
 	}
-	window.addEventListener('resize', l.throttle(resizer))
+	const thr = l.throttle(resizer)
+	window.addEventListener('resize', thr)
 	resizer()
 	// const observer = new MutationObserver(() => {
 	// 	const style = document.documentElement.style
@@ -71,32 +74,46 @@ export function useScaler(outerContainer: HTMLElement, initer?: ScaleIniter) {
 	// 	attributes: true,
 	// 	attributeFilter: ['style'],
 	// })
-	new ResizeObserver(([entry]) => {
-		// outerContainer.style.width = `${entry.contentRect.width * scaler.mainScale}px`
-		outerContainer.style.height = `${entry.contentRect.height * scaler.mainScale}px`
-	}).observe(innerContainer)
-	return scaler
+	const ro = new ResizeObserver((entries) => {
+		for (const entry of entries) {
+			if (entry.target === innerContainer) {
+				outerContainer.style.height =
+					`${entry.contentRect.height * scaler.mainScale}px`
+			}
+			if (entry.target === scaler.heightElement || entry.target === scaler.widthElement) {
+				thr()
+			}
+		}
+	})
+	ro.observe(innerContainer)
+	ro.observe(scaler.widthElement)
+	ro.observe(scaler.heightElement)
+	return resizer
 }
 
 export const standardIniter: (args: {
-	maxScreenWidth?: number
+	maxAspectRatio?: number
 	setFullScreenWidth?: (x: number) => void
 	setFullContentHeight?: (x: number) => void
 	setMainScale?: (x: number) => void
-	element?: HTMLElement
+	heightElement?: HTMLElement
+	widthElement?: HTMLElement
 }) => ScaleIniter =
-	({ maxScreenWidth = 460, setFullScreenWidth, setFullContentHeight, setMainScale, element }) =>
+	({ maxAspectRatio = Number(0.57) && 0.64, setFullScreenWidth, setFullContentHeight, setMainScale, widthElement, heightElement }) =>
 		(scaler) => {
-			if (element)
-				scaler.element = element;
+			scaler.widthElement = widthElement || document.documentElement;
+			scaler.heightElement = heightElement || document.documentElement;
 			scaler.onMainScaleChange = setMainScale
 			scaler.scaleComputer = (scaler) => {
 				if (typeof window === 'undefined') return 1
-				const element = scaler.element || document.documentElement
-				const fullScreenWidth = Math.min(element.clientWidth, maxScreenWidth)
+				const welement = scaler.widthElement
+				const helement = scaler.heightElement
+				const w = welement.clientWidth
+				const h = helement.clientHeight
+				const fullScreenWidth = Math.min(w, h * maxAspectRatio)
 				const fscl = fullScreenWidth / 320
 				setFullScreenWidth?.(fullScreenWidth) // setFullScreenWidth 此引用不会过期
-				setFullContentHeight?.(element.clientHeight / fscl)
+				setFullContentHeight?.(h / fscl)
 				return fscl
 			}
 		}

@@ -1,15 +1,36 @@
 :root {
-	--primary: #ea9580;
-	--primary-light: #ffdad2; /* 卡片,框等的背景颜色 */
-	--primary-dark: #c96f58; /* 卡片,框等内部input,text label的背景 */
+	--xai-primary-dark: #e0d8c3;
+	--xai-primary-light: #f5f0e6;
+	--xai-primary: #fcfaf5;
+	--xai-text: #4a3b32;
+	--xai-text-muted: #8c7b70;
+	--xai-notable: #d69875;
+	--xai-border: #d1c6b6;
+	--xai-shadow: #8f826d;
+	--xai-destructive: #dc2626;
+}
 
-	--text: #ffd700; /* 文本颜色 */
-	--back: #332e00;
-	--active: #5ff;
-	--deactive: #007070;
-	--border: #a50;
+.dark {
+	--xai-primary: #3d221a;
+	--xai-primary-light: #705049;
+	--xai-primary-dark: #2a1712;
+	--xai-text: #ffd700;
+	--xai-text-muted: #ccad00;
+	--xai-notable: #d94a2f;
+	--xai-border: #3d0700;
+	--xai-shadow: #ffcbbd;
+	--xai-destructive: #ff5252;
+}
 
-	--success: #5f5;
-	--danger: #f55;
-	--warning: #fa0;
+.light {
+	--xai-primary: #ea9580; /* 主色：用于输入框、标题背景等 */
+	--xai-primary-dark: #c96f58; /* 深主色：用于页面大背景、模态框底层 */
+	--xai-primary-light: #ffdad2; /* 浅主色：用于 Card、容器背景 */
+	--xai-text: #332e00; /* 文本主色：几乎所有的正文 */
+	--xai-text-muted: #8c7b70; /* 次要文本：更加浅淡的文字 */
+	--xai-notable: #ff5555; /* 显眼色：用于 Primary Button、高亮开关、进度条等 */
+	--xai-border: #975c20; /* 边框色 */
+	/* 额外说的一下 有一个地方 是--xai-notable作为背景 --xai-primary-light作为文本前景 */
+	--xai-shadow: #000;
+	--xai-destructive: #d32f2f;
 }

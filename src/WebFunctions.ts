@@ -100,3 +100,37 @@ export function web$redirectToDomain(newDomain: string) {
 	const { pathname, search, hash } = window.location
 	window.location.href = `${newDomain.replace(/\/$/, '')}${pathname}${search}${hash}`
 }
+
+export async function $copy(content: string) {
+	content = content?.trim() || ''
+	if (typeof window === 'undefined') return
+	if (navigator.clipboard?.writeText) {
+		try {
+			await navigator.clipboard
+				.writeText(content)
+			return true
+		} catch (error) {
+			return $fallbackCopy(content)
+		}
+	}
+	return $fallbackCopy(content)
+}
+
+export function $fallbackCopy(content: string) {
+	content = content?.trim() || ''
+	const textArea = document.createElement('textarea')
+	textArea.value = content
+	textArea.style.position = 'fixed'
+	textArea.style.opacity = '0'
+	document.body.appendChild(textArea)
+	textArea.focus()
+	textArea.select()
+	try {
+		const successful = document.execCommand('copy')
+		return successful
+	} catch (err) {
+		return false
+	} finally {
+		document.body.removeChild(textArea)
+	}
+}

@@ -9,7 +9,8 @@
    ======================= */
 @font-face {
 	font-family: 'xaifont';
-	src: url('/fonts/xaifont.woff2') format('woff2'),
+	src:
+		url('/fonts/xaifont.woff2') format('woff2'),
 		url('https://xaidozy.github.io/fonts/xaifont.woff2') format('woff2');
 	font-display: swap;
 }
@@ -78,8 +79,9 @@ html {
 	tab-size: 4; /* 3 */
 
 	/* 字体栈 */
-	font-family: xaifont, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif,
-		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif !important; /* 4 */
+	font-family:
+		xaifont, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif !important; /* 4 */
 
 	font-feature-settings: normal;
 	font-variation-settings: normal;
@@ -252,8 +254,9 @@ code,
 kbd,
 samp,
 pre {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-		'Courier New', monospace;
+	font-family:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		monospace;
 	font-feature-settings: normal;
 	font-variation-settings: normal;
 	font-size: 1em;

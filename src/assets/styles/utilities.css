@@ -36,7 +36,11 @@
 }
 
 @utility even-wrapper {
-	@apply flex! flex-row! justify-center! items-center! gap-4! p-4!;
+	@apply flex! flex-row! justify-evenly! items-center!;
+}
+
+@utility container {
+	@apply border-frame! px-5! py-3! rounded-2xl! flex! flex-col! gap-1! overflow-hidden!;
 }
 
 @utility container {

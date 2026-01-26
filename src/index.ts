@@ -2,7 +2,7 @@ export * from './Dozy.js'
 export * from './Functions'
 export * from './WebFunctions'
 export * from './modules/Store'
-export * from './modules/useScale'
+export * from './modules/useScaler.js'
 export * from './modules/XCode'
 export * from './modules/Interface'
 
@@ -13,8 +13,10 @@ import * as l from 'lodash-es'
 export { l }
 
 export { default as Cryptojs } from 'crypto-js'
-
+// import('crypto-js').then((mod) => {
+// 	console.log('Loaded crypto-js AES module:', mod.default.AES)
+// })
 export * from 'zod'
 export { default as z } from 'zod'
 
-export const DOZY = '1.0.18'
+export const DOZY = '1.0.21'

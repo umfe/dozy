@@ -23,8 +23,8 @@ export function __GensStyleIds() {
 		p: 'color: #FF55FF;',
 
 		i: 'color: #FfC0CB;',
-		m: 'font-size: 0.833em;',
-		M: 'font-size: 1.2em;',
+		m: 'font-size: 0.8em;',
+		M: 'font-size: 1.25em;',
 		t: 'font-weight: bold;',
 		T: 'text-shadow: 0.03em 0 0 currentColor;-webkit-text-stroke: 0.5px currentColor;',
 		l: 'font-style: italic;',

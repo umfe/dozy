@@ -1,5 +1,5 @@
-import { Items } from '../Interface.js'
-import { textShadow } from './Gens.js'
+import { Items } from "../Interface";
+import { textShadow } from "./Gens";
 
 export function __GensStyleIds() {
 	let v: any = {
@@ -26,17 +26,15 @@ export function __GensStyleIds() {
 		m: 'font-size: 0.833em;',
 		M: 'font-size: 1.2em;',
 		t: 'font-weight: bold;',
+		T: 'text-shadow: 0.03em 0 0 currentColor;-webkit-text-stroke: 0.5px currentColor;',
 		l: 'font-style: italic;',
-
-		// u: 'font-family: var
-		// o: 'font-family: var;',
-		// q: 'font-family: var;',
+		L: 'transform: skewX(-10deg);',
+		u: 'background-color: var(--xai-destructive, #dc2626);',
 
 		s: `${textShadow(undefined, true)}`,
-		S: 'text-shadow: 0 2px 0 #000',
+		S: 'text-shadow: 0 2px 0 #222',
 		c: 'user-select: text',
 		C: 'user-select: none',
-		// C: 'text-shadow: 0 1px 0 #000;',
 
 		insectnColor: 'background-color: var(--insectnColor);',
 		insectnShadow: 'box-shadow: var(--insectnShadow);',
@@ -45,19 +43,19 @@ export function __GensStyleIds() {
 		noshadow: 'box-shadow: 0 0 0 0;',
 		unsectn: '',
 		br: 'border-radius: 12px;',
-	}
+	};
 
 	// numeric style groups: make them 10-per-group
 	// 0..9   => color: var(--rb0..rb9)
 	// 10..19 => color: #fff; + textShadow(var(--rbN), true)
 	// 20..29 => color: var(--rbN); + textShadow(var(--rbN))
 	for (let i = 0; i < 10; i++) {
-		v[String(i)] = `color: var(--rb${i});`
-		v[String(i + 10)] = `color: #fff;${textShadow('var(--rb' + i + ')', true)}`
-		v[String(i + 20)] = `color: var(--rb${i});${textShadow('var(--rb' + i + ')')}`
+		v[String(i)] = `color: var(--rb${i});`;
+		v[String(i + 10)] = `color: #fff;${textShadow('var(--rb' + i + ')', true)}`;
+		v[String(i + 20)] = `color: var(--rb${i});${textShadow('var(--rb' + i + ')')}`;
 	}
 
-	v.insectn = v.insectnColor + v.insectnShadow + v.br
-	v.unsectn = v.bgctp + v.noshadow
-	return <Items<string>>v
+	v.insectn = v.insectnColor + v.insectnShadow + v.br;
+	v.unsectn = v.bgctp + v.noshadow;
+	return <Items<string>>v;
 }

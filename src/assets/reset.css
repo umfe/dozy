@@ -10,7 +10,7 @@
 @font-face {
 	font-family: 'xaifont';
 	src:
-		url('/fonts/xaifont.woff2') format('woff2'),
+		url('./fonts/xaifont.woff2') format('woff2'),
 		url('https://xaidozy.github.io/fonts/xaifont.woff2') format('woff2');
 	font-display: swap;
 }

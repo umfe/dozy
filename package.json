@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.29",
+	"version": "1.0.32",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
@@ -12,7 +12,10 @@
 			"default": "./dist/index.js"
 		},
 		"./package.json": "./package.json",
-		"./reset": "./dist/assets/reset.css"
+		"./reset": {
+			"types": "./dist/assets/reset.d.ts",
+			"default": "./dist/assets/reset.css"
+		}
 	},
 	"files": [
 		"dist",
@@ -30,6 +33,7 @@
 	"author": "xaidozy",
 	"license": "ISC",
 	"devDependencies": {
+		"@types/culori": "^4.0.1",
 		"@types/node": "^24.10.1",
 		"dts-bundle-generator": "^9.5.1",
 		"esbuild": "^0.18.18",
@@ -42,6 +46,7 @@
 		"@types/lodash-es": "^4.17.12",
 		"axios": "^1.13.2",
 		"crypto-js": "^4.2.0",
+		"culori": "^4.0.2",
 		"lodash-es": "^4.17.22",
 		"nanoid": "^5.1.6",
 		"zod": "^4.2.1"

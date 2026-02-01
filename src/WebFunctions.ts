@@ -134,3 +134,11 @@ export function $fallbackCopy(content: string) {
 		document.body.removeChild(textArea)
 	}
 }
+
+export function web$encodeURI(hash?: string) {
+	if (typeof window === 'undefined') throw ''
+	let h = location.hash
+	if (h === '#') h = ''
+	if (hash && !hash.startsWith('#')) hash = '#' + hash
+	return `${encodeURIComponent(location.pathname + location.search + (h || hash || ''))}`
+}

@@ -7,6 +7,7 @@ export * from './modules/XCode'
 export * from './modules/Interface'
 export * from './modules/gens/Gens.js'
 export * from './modules/gens/GensDirectives.js'
+export * from './modules/Color'
 
 export * from 'axios'
 export { default as axios } from 'axios'
@@ -21,4 +22,4 @@ export { default as Cryptojs } from 'crypto-js'
 export * from 'zod'
 export { default as z } from 'zod'
 
-export const DOZY = '1.0.29'
+export const DOZY = '1.0.32'

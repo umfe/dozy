@@ -53,6 +53,11 @@ export function registerCustomColor(name: string, color: string) {
  * @returns The parsed Color object or undefined if invalid.
  */
 export function smartParse(input: string | any, fallback?: string): Color | undefined {
+    // If input is already a Color object (has 'mode'), return it directly
+    if (typeof input === 'object' && input !== null && 'mode' in input) {
+        return input as Color;
+    }
+
     if (typeof input !== 'string') {
         return parse(input) || (fallback ? smartParse(fallback) : undefined);
     }

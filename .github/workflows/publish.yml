@@ -39,7 +39,12 @@ jobs:
         run: npm run build
 
       - name: Publish to NPM
-        run: npm publish
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NODE_AUTH_TOKEN is empty. Please check that you have added NPM_TOKEN to your GitHub repository secrets."
+            exit 1
+          fi
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

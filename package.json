@@ -33,7 +33,6 @@
 	"author": "xaidozy",
 	"license": "ISC",
 	"devDependencies": {
-		"@types/culori": "^4.0.1",
 		"@types/node": "^24.10.1",
 		"dts-bundle-generator": "^9.5.1",
 		"esbuild": "^0.18.18",
@@ -42,6 +41,7 @@
 		"typescript": "^5.4.2"
 	},
 	"dependencies": {
+		"@types/culori": "^4.0.1",
 		"@types/crypto-js": "^4.2.2",
 		"@types/lodash-es": "^4.17.12",
 		"axios": "^1.13.2",

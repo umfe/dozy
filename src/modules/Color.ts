@@ -47,12 +47,13 @@ export function registerCustomColor(name: string, color: string) {
  * - All standard CSS colors (names, hex, rgb, hsl, oklch, etc.) via culori.
  * - Hex strings without '#' (e.g., 'ff5555', 'abc', 'aabbccdd').
  * - Custom aliases registered via registerCustomColor.
+ * - Existing Color objects (passed through).
  * 
- * @param input The color string to parse.
+ * @param input The color string or Color object to parse.
  * @param fallback Optional fallback color string if parsing fails.
  * @returns The parsed Color object or undefined if invalid.
  */
-export function smartParse(input: string | any, fallback?: string): Color | undefined {
+export function smartParse(input: string | Color | any, fallback?: string): Color | undefined {
     // If input is already a Color object (has 'mode'), return it directly
     if (typeof input === 'object' && input !== null && 'mode' in input) {
         return input as Color;
@@ -91,8 +92,9 @@ export function smartParse(input: string | any, fallback?: string): Color | unde
 /**
  * Smartly parses a color and returns a CSS string.
  * Defaults to Hex for sRGB colors, or CSS function for others (like oklch).
+ * @param input The color string or object.
  */
-export function smartString(input: string | any, fallback?: string): string | undefined {
+export function smartString(input: string | Color | any, fallback?: string): string | undefined {
     const parsed = smartParse(input, fallback);
     if (!parsed) return undefined;
     return formatCss(parsed);
@@ -100,8 +102,9 @@ export function smartString(input: string | any, fallback?: string): string | un
 
 /**
  * Check if a color string is valid (smartly).
+ * @param input The color string or object.
  */
-export function isValidColor(input: string): boolean {
+export function isValidColor(input: string | Color | any): boolean {
     return !!smartParse(input);
 }
 
@@ -110,10 +113,10 @@ export function isValidColor(input: string): boolean {
  * Uses the Rec. 601 luma formula: (R * 299 + G * 587 + B * 114) / 1000.
  * Returns a value between 0 (black) and 1 (white).
  * 
- * @param input The color to check.
+ * @param input The color string or object to check.
  * @returns The brightness value (0-1), or 0 if invalid.
  */
-export function getBrightness(input: string | any): number {
+export function getBrightness(input: string | Color | any): number {
     const color = smartParse(input);
     if (!color) return 0;
 
@@ -133,10 +136,10 @@ export function getBrightness(input: string | any): number {
  * Converts a color to an RGBA array [r, g, b, a].
  * RGB values are 0-255, Alpha is 0-1.
  * 
- * @param input The color to convert.
+ * @param input The color string or object to convert.
  * @returns [r, g, b, a] or undefined if invalid.
  */
-export function toRgbaArray(input: string | any): [number, number, number, number] | undefined {
+export function toRgbaArray(input: string | Color | any): [number, number, number, number] | undefined {
     const color = smartParse(input);
     if (!color) return undefined;
 
@@ -153,10 +156,10 @@ export function toRgbaArray(input: string | any): [number, number, number, numbe
 
 /**
  * Converts a color to a Hex string.
- * @param input The color.
+ * @param input The color string or object.
  * @returns Hex string (e.g. #ff0000) or undefined.
  */
-export function toHexString(input: string | any): string | undefined {
+export function toHexString(input: string | Color | any): string | undefined {
     const color = smartParse(input);
     if (!color) return undefined;
     return formatHex(color);
@@ -168,10 +171,10 @@ export function toHexString(input: string | any): string | undefined {
  * Note: culori's formatRgb might use space-separated syntax (CSS Color 4).
  * This function forces comma-separated legacy syntax: rgb(r, g, b) or rgba(r, g, b, a).
  * 
- * @param input The color.
+ * @param input The color string or object.
  * @returns RGB/RGBA string or undefined.
  */
-export function toRgbString(input: string | any): string | undefined {
+export function toRgbString(input: string | Color | any): string | undefined {
     const arr = toRgbaArray(input);
     if (!arr) return undefined;
 
@@ -186,10 +189,10 @@ export function toRgbString(input: string | any): string | undefined {
  * Converts a color to an HSL/HSLA string.
  * Forces legacy comma-separated syntax: hsl(h, s%, l%) or hsla(h, s%, l%, a).
  * 
- * @param input The color.
+ * @param input The color string or object.
  * @returns HSL/HSLA string or undefined.
  */
-export function toHslString(input: string | any): string | undefined {
+export function toHslString(input: string | Color | any): string | undefined {
     const color = smartParse(input);
     if (!color) return undefined;
 

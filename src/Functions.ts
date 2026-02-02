@@ -123,11 +123,11 @@ export function $isValidOrBriefURL(url?: string) {
 	if (!url) return false
 	let pattern = new RegExp(
 		'^(https?:\\/\\/)?' + // protocol
-			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-			'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-			'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-			'(\\#[-a-z\\d_]*)?$',
+		'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+		'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+		'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+		'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+		'(\\#[-a-z\\d_]*)?$',
 		'i',
 	)
 	return pattern.test(url)
@@ -419,4 +419,14 @@ export function $formatWithCommas(num: number | string): string {
 	const [integerPart, decimalPart] = num.toString().split('.')
 	const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 	return decimalPart ? `${formattedInt}.${decimalPart}` : formattedInt
+}
+
+export function $isValidEmailWithUnicode(email?: string) {
+	email = email || ''
+	const regex = /^[\p{L}\p{N}._%+-]+@(?:[\p{L}\p{N}-]+\.)+[\p{L}]{2,}$/u
+	return regex.test(email)
+}
+
+export function $checkValidEmailWithUnicode(email?: string) {
+	if (!$isValidEmailWithUnicode(email)) errMsg('Invalid email address')
 }

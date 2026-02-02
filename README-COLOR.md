@@ -10,6 +10,7 @@ A powerful and smart color parsing and manipulation module powered by `culori`. 
 - **Smart Parsing**: Automatically detects hex colors even without the `#` prefix (e.g., `ff5555`, `abc`, `aabbccdd`).
 - **Custom Aliases**: Pre-configured short codes for common colors.
 - **Fallback Support**: Gracefully handle invalid inputs with fallback values.
+- **Utilities**: Built-in functions for brightness calculation and format conversion.
 
 ### Pre-defined Aliases
 
@@ -37,55 +38,57 @@ The following single-letter aliases are available out of the box:
 
 ### API Reference
 
-#### `smartString(input: string | any, fallback?: string): string | undefined`
+#### Core Parsing
 
+##### `smartString(input: string | any, fallback?: string): string | undefined`
 Parses a color and returns its CSS string representation.
+```typescript
+import { smartString } from 'dozy';
+smartString('oklch(60% 0.1 200)'); // -> "oklch(0.6 0.1 200)"
+smartString('ff5555');             // -> "#ff5555" (Smart Hex)
+```
 
-- **Parameters**:
-    - `input` (`string | any`): The color string to parse. Can be a CSS color, a hex code (with or without `#`), or a registered alias.
-    - `fallback` (`string?`): An optional color string to return if parsing fails.
-- **Returns**:
-    - `string`: The valid CSS color string (e.g., `#ff0000`, `oklch(0.6 0.1 200)`).
-    - `undefined`: If parsing fails and no fallback is provided.
-- **Examples**:
+##### `smartParse(input: string | any, fallback?: string): Color | undefined`
+Parses a color into a `culori` Color object for advanced manipulation.
 
-    ```typescript
-    import { smartString } from 'dozy'
+#### Color Information & Conversion
 
-    smartString('oklch(60% 0.1 200)') // -> "oklch(0.6 0.1 200)"
-    smartString('ff5555') // -> "#ff5555" (Smart Hex)
-    smartString('i') // -> "#ffc0cb" (Alias)
-    smartString('invalid', 'red') // -> "#ff0000" (Fallback)
-    ```
+##### `getBrightness(input: string | any): number`
+Calculates the brightness (luma) of a color.
+*   **Returns**: A number between `0` (black) and `1` (white).
+*   **Formula**: `(R * 299 + G * 587 + B * 114) / 1000` (Rec. 601)
+```typescript
+import { getBrightness } from 'dozy';
+getBrightness('#ffffff'); // -> 1
+getBrightness('#000000'); // -> 0
+```
 
-#### `smartParse(input: string | any, fallback?: string): Color | undefined`
+##### `toHexString(input: string | any): string | undefined`
+Converts to a Hex string (e.g., `#ff0000`).
 
-Parses a color into a `culori` Color object for advanced manipulation (conversions, adjustments, etc.).
+##### `toRgbString(input: string | any): string | undefined`
+Converts to an RGB/RGBA string (e.g., `rgb(255, 0, 0)`).
 
-- **Parameters**:
-    - `input` (`string | any`): The input color.
-    - `fallback` (`string?`): Optional fallback.
-- **Returns**:
-    - `Color` object (from `culori`) or `undefined`.
+##### `toHslString(input: string | any): string | undefined`
+Converts to an HSL/HSLA string (e.g., `hsl(0, 100%, 50%)`).
 
-#### `registerCustomColor(name: string, color: string): void`
+##### `toRgbaArray(input: string | any): [r, g, b, a] | undefined`
+Returns the color as an array of RGBA values.
+*   `r, g, b`: 0-255
+*   `a`: 0-1
+```typescript
+import { toRgbaArray } from 'dozy';
+toRgbaArray('red'); // -> [255, 0, 0, 1]
+```
 
+#### Configuration
+
+##### `registerCustomColor(name: string, color: string): void`
 Registers a new global alias.
+```typescript
+registerCustomColor('brand', '#007bff');
+smartString('brand'); // -> "#007bff"
+```
 
-- **Parameters**:
-    - `name` (`string`): The key/name for the alias.
-    - `color` (`string`): The valid color value it maps to.
-- **Example**:
-
-    ```typescript
-    import { registerCustomColor, smartString } from 'dozy'
-
-    registerCustomColor('brand', '#007bff')
-    smartString('brand') // -> "#007bff"
-    ```
-
-#### `isValidColor(input: string): boolean`
-
+##### `isValidColor(input: string): boolean`
 Checks if a string is a valid recognized color.
-
-- **Returns**: `boolean` - `true` if the color can be parsed, `false` otherwise.

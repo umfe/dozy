@@ -54,7 +54,7 @@ export function registerCustomColor(name: string, color: string) {
  */
 export function smartParse(input: string | any, fallback?: string): Color | undefined {
     if (typeof input !== 'string') {
-        return parse(input) || (fallback ? parse(fallback) : undefined);
+        return parse(input) || (fallback ? smartParse(fallback) : undefined);
     }
 
     // 1. Try parsing directly
@@ -77,7 +77,7 @@ export function smartParse(input: string | any, fallback?: string): Color | unde
 
     // 4. Fallback
     if (fallback) {
-        return parse(fallback);
+        return smartParse(fallback);
     }
 
     return undefined;

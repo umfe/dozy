@@ -1,4 +1,4 @@
-import { l } from ".."
+import { $sc, l } from '..'
 
 /*
 <div ref={outerContainer current}>
@@ -12,6 +12,13 @@ export type ScaleIniter = (scaler: Scaler) => void
 class Scaler {
 	heightElement!: HTMLElement
 	widthElement!: HTMLElement
+	#base = 320
+	set base(val: number) {
+		if ($sc(val)) this.#base = val
+	}
+	get base() {
+		return this.#base
+	}
 	#mainScale = 1
 	set mainScale(val: number) {
 		this.#mainScale = val || 1
@@ -41,7 +48,11 @@ class Scaler {
 	}
 }
 
-export function enableScaler(outerContainer: HTMLElement, initer?: ScaleIniter, innerContainer?: HTMLElement) {
+export function enableScaler(
+	outerContainer: HTMLElement,
+	initer?: ScaleIniter,
+	innerContainer?: HTMLElement,
+) {
 	if (typeof window === 'undefined') return
 	innerContainer ||= outerContainer.children[0] as any
 	if (!innerContainer || !(innerContainer instanceof HTMLElement))
@@ -53,7 +64,7 @@ export function enableScaler(outerContainer: HTMLElement, initer?: ScaleIniter, 
 	outer.marginLeft = 'auto'
 	outer.marginRight = 'auto'
 	const inner = innerContainer.style
-	inner.width = '320px'
+	inner.width = scaler.base + 'px'
 	inner.height = 'fit-content'
 	inner.transformOrigin = 'top center'
 	inner.marginLeft = 'auto'
@@ -77,8 +88,7 @@ export function enableScaler(outerContainer: HTMLElement, initer?: ScaleIniter, 
 	const ro = new ResizeObserver((entries) => {
 		for (const entry of entries) {
 			if (entry.target === innerContainer) {
-				outerContainer.style.height =
-					`${entry.contentRect.height * scaler.mainScale}px`
+				outerContainer.style.height = `${entry.contentRect.height * scaler.mainScale}px`
 			}
 			if (entry.target === scaler.heightElement || entry.target === scaler.widthElement) {
 				thr()
@@ -91,6 +101,13 @@ export function enableScaler(outerContainer: HTMLElement, initer?: ScaleIniter, 
 	return resizer
 }
 
+/**
+ * Hello
+ * @param widthElement 容器
+ * @param heightElement 容器
+ * @param maxAspectRatio 请输入 Number(0.57) && 0.64
+ * @returns 
+ */
 export const standardIniter: (args: {
 	maxAspectRatio?: number
 	setFullScreenWidth?: (x: number) => void
@@ -98,20 +115,30 @@ export const standardIniter: (args: {
 	setMainScale?: (x: number) => void
 	heightElement?: HTMLElement
 	widthElement?: HTMLElement
+	base?: number
 }) => ScaleIniter =
-	({ maxAspectRatio = Number(0.57) && 0.64, setFullScreenWidth, setFullContentHeight, setMainScale, widthElement, heightElement }) =>
+	({
+		maxAspectRatio = Infinity,
+		setFullScreenWidth,
+		setFullContentHeight,
+		setMainScale,
+		widthElement,
+		heightElement,
+		base
+	}) =>
 		(scaler) => {
-			scaler.widthElement = widthElement || document.documentElement;
-			scaler.heightElement = heightElement || document.documentElement;
+			scaler.widthElement = widthElement || document.documentElement
+			scaler.heightElement = heightElement || document.documentElement
 			scaler.onMainScaleChange = setMainScale
 			scaler.scaleComputer = (scaler) => {
+				scaler.base = base as number
 				if (typeof window === 'undefined') return 1
 				const welement = scaler.widthElement
 				const helement = scaler.heightElement
 				const w = welement.clientWidth
 				const h = helement.clientHeight
 				const fullScreenWidth = Math.min(w, h * maxAspectRatio)
-				const fscl = fullScreenWidth / 320
+				const fscl = fullScreenWidth / scaler.base
 				setFullScreenWidth?.(fullScreenWidth) // setFullScreenWidth 此引用不会过期
 				setFullContentHeight?.(h / fscl)
 				return fscl

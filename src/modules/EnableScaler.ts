@@ -65,10 +65,6 @@ export function enableScaler(
 	outer.marginRight = 'auto'
 	const inner = innerContainer.style
 	inner.width = scaler.base + 'px'
-	const setBase = (val: number) => {
-		scaler.base = val
-		inner.width = scaler.base + 'px'
-	}
 	inner.height = 'fit-content'
 	inner.transformOrigin = 'top center'
 	inner.marginLeft = 'auto'
@@ -79,6 +75,11 @@ export function enableScaler(
 		}
 	}
 	const thr = l.throttle(resizer)
+	const setBase = (val: number) => {
+		scaler.base = val
+		inner.width = scaler.base + 'px'
+		thr()
+	}
 	window.addEventListener('resize', thr)
 	resizer()
 	// const observer = new MutationObserver(() => {

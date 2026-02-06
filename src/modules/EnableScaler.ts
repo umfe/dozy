@@ -65,6 +65,10 @@ export function enableScaler(
 	outer.marginRight = 'auto'
 	const inner = innerContainer.style
 	inner.width = scaler.base + 'px'
+	const setBase = (val: number) => {
+		scaler.base = val
+		inner.width = scaler.base + 'px'
+	}
 	inner.height = 'fit-content'
 	inner.transformOrigin = 'top center'
 	inner.marginLeft = 'auto'
@@ -98,7 +102,14 @@ export function enableScaler(
 	ro.observe(innerContainer)
 	ro.observe(scaler.widthElement)
 	ro.observe(scaler.heightElement)
-	return resizer
+	return {
+		resizer,
+		clean: () => {
+			window.removeEventListener('resize', thr)
+			ro.disconnect()
+		},
+		setBase
+	}
 }
 
 /**
@@ -130,8 +141,8 @@ export const standardIniter: (args: {
 			scaler.widthElement = widthElement || document.documentElement
 			scaler.heightElement = heightElement || document.documentElement
 			scaler.onMainScaleChange = setMainScale
+			scaler.base = base as number
 			scaler.scaleComputer = (scaler) => {
-				scaler.base = base as number
 				if (typeof window === 'undefined') return 1
 				const welement = scaler.widthElement
 				const helement = scaler.heightElement

@@ -41,10 +41,11 @@
 		"typescript": "^5.4.2"
 	},
 	"dependencies": {
-		"@types/culori": "^4.0.1",
 		"@types/crypto-js": "^4.2.2",
+		"@types/culori": "^4.0.1",
 		"@types/lodash-es": "^4.17.12",
 		"axios": "^1.13.2",
+		"browser-image-compression": "^2.0.2",
 		"crypto-js": "^4.2.0",
 		"culori": "^4.0.2",
 		"lodash-es": "^4.17.22",

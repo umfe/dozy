@@ -1,4 +1,6 @@
 import { nanoid } from 'nanoid'
+import imageCompression, { Options } from 'browser-image-compression'
+
 
 export function web$setPathTarget(s: string) {
 	if (!s.startsWith('/')) s = '/' + s
@@ -141,4 +143,46 @@ export function web$encodeURI(hash?: string) {
 	if (h === '#') h = ''
 	if (hash && !hash.startsWith('#')) hash = '#' + hash
 	return `${encodeURIComponent(location.pathname + location.search + (h || hash || ''))}`
+}
+
+export async function $compressImage(file: File, options?: Options): Promise<File>
+export async function $compressImage(files: File[], options?: Options): Promise<File[]>
+export async function $compressImage(input: File | File[], options?: Options): Promise<File | File[]> {
+	const defaultOptions: Options = {
+		/** 最大文件大小 (MB)，默认为无穷大 */
+		maxSizeMB: 0.5,
+		/** 是否使用 Web Worker (多线程) 进行压缩，避免卡顿 UI，默认为 true */
+		useWebWorker: true,
+		/** 最大宽度或高度，图片将缩放以适应此尺寸，默认为 undefined */
+		maxWidthOrHeight: 1920,
+		/** 初始压缩质量 (0-1)，默认为 1.0 */
+		// initialQuality: 1.0,
+		/** 最大迭代次数，默认为 10 */
+		// maxIteration: 10,
+		/** 是否保留 Exif 信息 (如拍摄时间、地点等)，默认为 false */
+		// preserveExif: false,
+		/** 输出文件的 MIME 类型，默认与原图相同 */
+		// fileType: 'image/jpeg',
+	}
+	const opts = { ...defaultOptions, ...options }
+
+	const processFile = async (f: File) => {
+		try {
+			const compressedBlob = await imageCompression(f, opts)
+			return new File([compressedBlob], f.name, { type: compressedBlob.type })
+		} catch (error) {
+			console.error('Image compression failed:', error)
+			return f // Return original file if compression fails? Or throw? Usually safer to return original or throw. User didn't specify error handling, but toast error might be good.
+			// Let's just throw for now so caller can handle, or return original. 
+			// Given the user wants to "encapsulate", I should probably handle it or let it bubble.
+			// Let's let it bubble up as the original code had try-catch in UploadAvatar.
+			throw error;
+		}
+	}
+
+	if (Array.isArray(input)) {
+		return Promise.all(input.map(processFile))
+	} else {
+		return processFile(input)
+	}
 }

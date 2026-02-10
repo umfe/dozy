@@ -431,5 +431,15 @@ export function $checkValidEmailWithUnicode(email?: string) {
 	if (!$isValidEmailWithUnicode(email)) errMsg('Invalid email address')
 }
 
+export function $formatDate(dateInput: string | number | Date): string {
+	const date = new Date(dateInput)
+	const year = date.getFullYear()
+	const month = date.getMonth() + 1
+	const day = date.getDate()
+	const hour = date.getHours().toString().padStart(2, '0')
+	const minute = date.getMinutes().toString().padStart(2, '0')
+
+	return `${year}年${month}月${day}日 ${hour}:${minute}`
+}
 
 

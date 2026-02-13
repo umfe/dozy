@@ -17,6 +17,11 @@
 	src: url('./fonts/forthecode.woff2') format('woff2');
 	font-display: swap;
 }
+@font-face {
+	font-family: 'forthebadge';
+	src: url('./fonts/forthebadge.woff2') format('woff2');
+	font-display: swap;
+}
 
 /* @font-face {
 	font-family: 'defaultFont';
@@ -68,6 +73,7 @@
 	--for-the-code:
 		forthecode, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Microsoft YaHei',
 		'Microsoft YaHei UI', 'Liberation Mono', 'Courier New', monospace;
+	--for-the-badge: forthebadge;
 }
 
 /* HTML 基础设置 

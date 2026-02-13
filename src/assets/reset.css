@@ -59,11 +59,12 @@
 	-moz-osx-font-smoothing: grayscale; /* Firefox字体抗锯齿 */
 
 	--for-font:
-		xaifont, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif, 'Apple Color Emoji',
-		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+		Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif, 'Microsoft YaHei',
+		'Microsoft YaHei UI', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+		'Noto Color Emoji', sans-serif;
 	--for-code-font:
-		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-		monospace;
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Microsoft YaHei',
+		'Microsoft YaHei UI', 'Liberation Mono', 'Courier New', monospace;
 }
 
 /* HTML 基础设置 
@@ -87,7 +88,7 @@ html {
 	tab-size: 4; /* 3 */
 
 	/* 字体栈 */
-	font-family: var(--for-font);
+	font-family: xaifont, var(--for-font);
 
 	font-feature-settings: normal;
 	font-variation-settings: normal;

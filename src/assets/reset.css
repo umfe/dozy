@@ -198,6 +198,35 @@ body {
 .scrollbar::-webkit-scrollbar-thumb:hover {
 	background-color: #fff; /* 悬停颜色 */
 }
+
+.truncate {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.line-clamp-1 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.xai-text-bold {
+	text-shadow:
+		0.01em 0.01em 0 currentColor,
+		0.02em 0.02em 0 currentColor,
+		-0.01em 0.01em 0 currentColor,
+		0.01em -0.01em 0 currentColor;
+}
+
 /* Firefox 浏览器 */
 .scrollbar {
 	scrollbar-width: thin; /* 细滚动条 */

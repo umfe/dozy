@@ -61,12 +61,12 @@
 	-webkit-font-smoothing: antialiased; /* WebKit字体抗锯齿 */
 	-moz-osx-font-smoothing: grayscale; /* Firefox字体抗锯齿 */
 
-	--for-font:
-		Verdana, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif, 'Microsoft YaHei',
-		'Microsoft YaHei UI', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-		'Noto Color Emoji', sans-serif;
-	--for-code-font:
-		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Microsoft YaHei',
+	--for-the-font:
+		forthefont, Verdana, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif,
+		'Microsoft YaHei', 'Microsoft YaHei UI', 'Apple Color Emoji', 'Segoe UI Emoji',
+		'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+	--for-the-code:
+		forthecode, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Microsoft YaHei',
 		'Microsoft YaHei UI', 'Liberation Mono', 'Courier New', monospace;
 }
 
@@ -91,7 +91,7 @@ html {
 	tab-size: 4; /* 3 */
 
 	/* 字体栈 */
-	font-family: forthefont, var(--for-font);
+	font-family: var(--for-the-font);
 
 	font-feature-settings: normal;
 	font-variation-settings: normal;
@@ -267,7 +267,7 @@ code,
 kbd,
 samp,
 pre {
-	font-family: var(--for-code-font);
+	font-family: var(--for-the-code);
 	font-feature-settings: normal;
 	font-variation-settings: normal;
 	font-size: 1em;

@@ -21,7 +21,7 @@ class Scaler {
 	}
 	#mainScale = 1
 	set mainScale(val: number) {
-		this.#mainScale = val || 1
+		this.#mainScale = val ? val + 0.01 : 1
 		this.onMainScaleChange?.(this.#mainScale)
 		if (typeof window === 'undefined') return
 		this.innerContainer.style.transform = 'translateX(-50%) scale(' + this.mainScale + ')'

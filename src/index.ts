@@ -26,4 +26,4 @@ export { default as Cryptojs } from 'crypto-js'
 export * from 'zod'
 export { default as z } from 'zod'
 
-export const DOZY = '1.0.46'
+export const DOZY = '1.0.47'

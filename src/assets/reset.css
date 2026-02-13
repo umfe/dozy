@@ -8,10 +8,13 @@
    1. 字体定义 (Font Face)
    ======================= */
 @font-face {
-	font-family: 'xaifont';
-	src:
-		url('./fonts/xaifont.woff2') format('woff2'),
-		url('https://xaidozy.github.io/fonts/xaifont.woff2') format('woff2');
+	font-family: 'forthefont';
+	src: url('./fonts/forthefont.woff2') format('woff2');
+	font-display: swap;
+}
+@font-face {
+	font-family: 'forthecode';
+	src: url('./fonts/forthecode.woff2') format('woff2');
 	font-display: swap;
 }
 
@@ -59,7 +62,7 @@
 	-moz-osx-font-smoothing: grayscale; /* Firefox字体抗锯齿 */
 
 	--for-font:
-		Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif, 'Microsoft YaHei',
+		Verdana, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif, 'Microsoft YaHei',
 		'Microsoft YaHei UI', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
 		'Noto Color Emoji', sans-serif;
 	--for-code-font:
@@ -88,7 +91,7 @@ html {
 	tab-size: 4; /* 3 */
 
 	/* 字体栈 */
-	font-family: xaifont, var(--for-font);
+	font-family: forthefont, var(--for-font);
 
 	font-feature-settings: normal;
 	font-variation-settings: normal;

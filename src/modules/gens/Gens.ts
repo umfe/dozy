@@ -1,5 +1,5 @@
 const webSide = typeof window !== 'undefined'
-import { $genSSF, $lplus, $s, xtrim } from '../../Functions'
+import { $genSSF, $lplus, $s, xtrim } from '../../x/Functions'
 import { __GensDirectives } from './GensDirectives.js'
 import { __GensStyleIds } from './GensStyleIds.js'
 
@@ -180,17 +180,17 @@ function __GensStringToArray(input: string): StringNode {
 			if (char === '{') {
 				// 将当前累积的字符作为字符串推入栈顶的数组
 				if (currentChunk) {
-					;(<any>stack[stack.length - 1]).push(currentChunk)
+					; (<any>stack[stack.length - 1]).push(currentChunk)
 					currentChunk = ''
 				}
 				// 创建一个新的数组，推入栈顶，并作为新的栈顶
 				const newArray: any[] = []
-				;(<any>stack[stack.length - 1]).push(newArray)
+					; (<any>stack[stack.length - 1]).push(newArray)
 				stack.push(newArray)
 			} else if (char === '}') {
 				// 将当前累积的字符作为字符串推入栈顶的数组
 				if (currentChunk) {
-					;(<any>stack[stack.length - 1]).push(currentChunk)
+					; (<any>stack[stack.length - 1]).push(currentChunk)
 					currentChunk = ''
 				}
 				// 弹出栈顶，回到上一层级
@@ -203,7 +203,7 @@ function __GensStringToArray(input: string): StringNode {
 
 		// 处理最后可能剩余的字符
 		if (currentChunk) {
-			;(<any>stack[stack.length - 1]).push(currentChunk)
+			; (<any>stack[stack.length - 1]).push(currentChunk)
 		}
 
 		return <any>stack[0]

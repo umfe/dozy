@@ -7,9 +7,12 @@
 	"type": "module",
 	"exports": {
 		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.js",
-			"default": "./dist/index.js"
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./*": {
+			"types": "./dist/*.d.ts",
+			"import": "./dist/*.js"
 		},
 		"./package.json": "./package.json",
 		"./reset": {
@@ -23,21 +26,15 @@
 		"README.md"
 	],
 	"scripts": {
-		"clean": "rimraf dist",
-		"build:types": "tsc -p tsconfig.json --emitDeclarationOnly --declaration --outDir dist",
-		"build:types:bundle": "dts-bundle-generator -o dist/index.d.ts src/index.ts --inline-declare-externals --no-banner",
-		"build:bundle": "esbuild src/index.ts --bundle --platform=browser --format=esm --target=es2020 --outfile=dist/index.js --sourcemap --minify",
-		"build": "npm run clean && npm run build:types && npm run build:types:bundle && npm run build:bundle && node scripts/copy-assets.js",
+		"clean": "tsup --clean",
+		"build": "tsup && node scripts/copy-assets.js",
 		"prepare": "npm run build"
 	},
 	"author": "xaidozy",
 	"license": "ISC",
 	"devDependencies": {
 		"@types/node": "^24.10.1",
-		"dts-bundle-generator": "^9.5.1",
-		"esbuild": "^0.18.18",
-		"javascript-obfuscator": "^4.2.0",
-		"rimraf": "^5.0.0",
+		"tsup": "^8.5.1",
 		"typescript": "^5.4.2"
 	},
 	"dependencies": {

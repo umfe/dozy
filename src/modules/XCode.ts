@@ -1,4 +1,4 @@
-import { $decodeBase64ToUnicode, $encodeUnicodeToBase64 } from '../Functions'
+import { $decodeBase64ToUnicode, $encodeUnicodeToBase64 } from '../x/Functions'
 
 export class StringObfuscator {
 	key: string

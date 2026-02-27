@@ -8,4 +8,6 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   noExternal: [/(.*)/],
+  platform: 'browser', // Force browser platform to polyfill/stub node builtins
+  shims: true, // Inject shims for Node.js built-ins
 })

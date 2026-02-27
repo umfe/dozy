@@ -23,7 +23,7 @@ export { default as Cryptojs } from 'crypto-js'
 // import('crypto-js').then((mod) => {
 // 	console.log('Loaded crypto-js AES module:', mod.default.AES)
 // })
-export * from 'zod'
-export { default as z } from 'zod'
+
+export { nanoid, customAlphabet, urlAlphabet } from 'nanoid'
 
 export const DOZY = '1.0.49'

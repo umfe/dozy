@@ -10,9 +10,9 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./*": {
-			"types": "./dist/*.d.ts",
-			"import": "./dist/*.js"
+		"./zod": {
+			"types": "./dist/zod.d.ts",
+			"import": "./dist/zod.js"
 		},
 		"./package.json": "./package.json",
 		"./reset": {
@@ -22,8 +22,8 @@
 	},
 	"files": [
 		"dist",
-		"assets",
-		"README.md"
+		"README.md",
+		"README-COLOR.md"
 	],
 	"scripts": {
 		"clean": "tsup --clean",

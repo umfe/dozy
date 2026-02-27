@@ -26,4 +26,4 @@ export { default as Cryptojs } from 'crypto-js'
 
 export { nanoid, customAlphabet, urlAlphabet } from 'nanoid'
 
-export const DOZY = '1.0.49'
+export const DOZY = '1.0.50'

@@ -8,13 +8,13 @@
    1. 字体定义 (Font Face)
    ======================= */
 @font-face {
-	font-family: 'forthefont';
-	src: url('./fonts/forthefont.woff2') format('woff2');
+	font-family: 'xaiforfont';
+	src: url('./fonts/xaiforfont.woff2') format('woff2');
 	font-display: swap;
 }
 @font-face {
-	font-family: 'forthecode';
-	src: url('./fonts/forthecode.woff2') format('woff2');
+	font-family: 'xaiforcode';
+	src: url('./fonts/xaiforcode.woff2') format('woff2');
 	font-display: swap;
 }
 @font-face {
@@ -67,11 +67,11 @@
 	-moz-osx-font-smoothing: grayscale; /* Firefox字体抗锯齿 */
 
 	--for-the-font:
-		forthefont, Verdana, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif,
+		xaiforfont, Verdana, Inter, system-ui, Avenir, Helvetica, Arial, ui-sans-serif,
 		'Microsoft YaHei', 'Microsoft YaHei UI', 'Apple Color Emoji', 'Segoe UI Emoji',
 		'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
 	--for-the-code:
-		forthecode, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Microsoft YaHei',
+		xaiforcode, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Microsoft YaHei',
 		'Microsoft YaHei UI', 'Liberation Mono', 'Courier New', monospace;
 	--xaifont: xaifont;
 }

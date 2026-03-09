@@ -369,6 +369,7 @@ export function $replaceHolesWithUndefined<T>(arr: Array<T | undefined>): Array<
 }
 
 export function $stringToRange(str: string, max: number): number {
+	str ||= ''
 	let hash = 5381
 	for (let i = 0; i < str.length; i++) {
 		hash = (hash * 33) ^ str.charCodeAt(i)

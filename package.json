@@ -18,6 +18,10 @@
 		"./reset": {
 			"types": "./dist/assets/reset.d.ts",
 			"default": "./dist/assets/reset.css"
+		},
+		"./vars": {
+			"types": "./dist/assets/vars.d.ts",
+			"default": "./dist/assets/vars.css"
 		}
 	},
 	"files": [

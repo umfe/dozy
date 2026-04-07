@@ -9,17 +9,17 @@
    ======================= */
 @font-face {
 	font-family: 'xaiforfont';
-	src: url('https://cdn.jsdelivr.net/gh/xaidozy/res@main/fonts/xaiforfont.woff2') format('woff2');
+	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/fonts/xaiforfont.woff2') format('woff2');
 	font-display: swap;
 }
 @font-face {
 	font-family: 'xaiforcode';
-	src: url('https://cdn.jsdelivr.net/gh/xaidozy/res@main/fonts/xaiforcode.woff2') format('woff2');
+	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/fonts/xaiforcode.woff2') format('woff2');
 	font-display: swap;
 }
 @font-face {
 	font-family: 'xaifont';
-	src: url('https://cdn.jsdelivr.net/gh/xaidozy/res@main/fonts/xaifont.woff2') format('woff2');
+	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/fonts/xaifont.woff2') format('woff2');
 	font-display: swap;
 }
 

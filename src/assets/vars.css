@@ -62,41 +62,44 @@
  */
 
 :root {
-    /* Default: 暖黄护眼风 - 类似纸张或护眼模式，柔和舒适 */
-    --xai-primary-dark: #f9f4e0; /* 页面大背景：极淡的奶黄色，非常柔和 */
-    --xai-primary-light: #fffdf5; /* 卡片：接近白色的淡米黄，干净且护眼 */
-    --xai-primary: #f2ebd4; /* 输入框：深一点的淡黄，内陷感清晰 */
-    --xai-text: #5c4b37; /* 文本：深咖啡色，比纯黑更护眼且配合暖黄背景 */
-    --xai-text-muted: #998a76; /* 次要文本：浅咖啡色 */
-    --xai-notable: #f4a261; /* 显眼色：温暖的沙橙色，类似 Light 主题的柔和感，但色调更暖，配合护眼背景 */
-    --xai-border: #ded2b6; /* 边框：米灰色 */
-    --xai-shadow: #8f826d;
-    --xai-destructive: #d9534f;
+	/* Default: 暖黄护眼风 - 类似纸张或护眼模式，柔和舒适*/
+	--xai-primary-dark: #f9f4e0; /* 页面大背景：极淡的奶黄色，非常柔和 */
+	--xai-primary-light: #fffdf5; /* 卡片：接近白色的淡米黄，干净且护眼 */
+	--xai-primary: #fefbf6; /* 输入框：浅米色，内陷感清晰 */
+	--xai-text: #5c4b37; /* 文本：深咖啡色，比纯黑更护眼且配合暖黄背景 */
+	--xai-text-muted: #998a76; /* 次要文本：浅咖啡色 */
+	--xai-notable: #f4a261; /* 显眼色：温暖的棕橙色，配合护眼背景 */
+	--xai-border: #f0e8dd; /* 边框：淡米灰色 */
+	--xai-shadow: #8f826d; /* 阴影：比边框稍深的米灰色，保持柔和 */
+	--xai-destructive: #d9534f; /* 危险操作：暖红色，与暖黄主题协调 */
 }
 
-.dark {
-    /* Dark: 高压深蓝紫 - 优雅、神秘、高级 */
-    --xai-primary-dark: #0f172a; /* 页面大背景：深邃的午夜蓝 (Slate-900) */
-    --xai-primary-light: #1e293b; /* 卡片：深蓝灰 (Slate-800)，有质感 */
-    --xai-primary: #334155; /* 输入框：Slate-700，层级分明 */
-    --xai-text: #e2e8f0; /* 文本：Slate-200，冷白 */
-    --xai-text-muted: #94a3b8; /* 次要文本：Slate-400 */
-    --xai-notable: #8b5cf6; /* 显眼色：Violet-500，高贵的深紫色，优雅且有压迫感 */
-    --xai-border: #475569; /* 边框：Slate-600 */
-    --xai-shadow: #000000;
-    --xai-destructive: #f43f5e; /* Rose-500 */
+.dark,
+.cl-dark {
+	/* 使用cl-dark切换主题 如果你想避免shadcn里dark的样式 (dark:xxx) */
+	/* Dark: 高压深蓝紫 - 优雅、神秘、高级 */
+	--xai-primary-dark: #0f172a; /* 页面大背景：深邃的午夜蓝 (Slate-900) */
+	--xai-primary-light: #1e293b; /* 卡片：深蓝灰 (Slate-800)，有质感 */
+	--xai-primary: #334155; /* 输入框：Slate-700，层级分明 */
+	--xai-text: #e2e8f0; /* 文本：Slate-200，冷白 */
+	--xai-text-muted: #94a3b8; /* 次要文本：Slate-400 */
+	--xai-notable: #8b5cf6; /* 显眼色：Violet-500，高贵的深紫色，优雅且有压迫感 */
+	--xai-border: #475569; /* 边框：Slate-600 */
+	--xai-shadow: #000000;
+	--xai-destructive: #f43f5e; /* Rose-500 */
 }
 
-.light {
-    /* Light: 纯白亮色 - 极致干净，高调 */
-    --xai-primary-dark: #f1f5f9; /* 页面大背景：Slate-100，比纯白稍暗，增强辨识度 */
-    --xai-primary-light: #ffffff; /* 卡片：纯白，极致干净 */
-    --xai-primary: #e2e8f0; /* 输入框：Slate-200，极淡的灰 */
-    --xai-text: #020617; /* 文本：Slate-950，极致的黑 */
-    --xai-text-muted: #64748b; /* 次要文本 */
-    --xai-notable: #38bdf8; /* 显眼色：明亮的淡蓝/青色，清新通透 */
-    --xai-border: #cbd5e1; /* 边框 */
-    /* 额外说的一下 有一个地方 是--xai-notable作为背景 --xai-primary-light作为文本前景 */
-    --xai-shadow: #000000;
-    --xai-destructive: #ef4444;
+.light,
+.cl-light {
+	/* Light: 纯白亮色 - 极致干净，高调 */
+	--xai-primary-dark: #f1f5f9; /* 页面大背景：Slate-100，比纯白稍暗，增强辨识度 */
+	--xai-primary-light: #ffffff; /* 卡片：纯白，极致干净 */
+	--xai-primary: #e2e8f0; /* 输入框：Slate-200，极淡的灰 */
+	--xai-text: #020617; /* 文本：Slate-950，极致的黑 */
+	--xai-text-muted: #64748b; /* 次要文本 */
+	--xai-notable: #38bdf8; /* 显眼色：明亮的淡蓝/青色，清新通透 */
+	--xai-border: #cbd5e1; /* 边框 */
+	/* 额外说的一下 有一个地方 是--xai-notable作为背景 --xai-primary-light作为文本前景 */
+	--xai-shadow: #000000;
+	--xai-destructive: #ef4444;
 }

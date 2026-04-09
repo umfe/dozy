@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios'
 import { $keys, $jsonParse } from '../modules/Store'
+import { Any } from '../modules/InterTypes/InterType'
 
 export function $isObject(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object'
@@ -123,11 +124,11 @@ export function $isValidOrBriefURL(url?: string) {
 	if (!url) return false
 	let pattern = new RegExp(
 		'^(https?:\\/\\/)?' + // protocol
-		'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-		'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-		'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-		'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-		'(\\#[-a-z\\d_]*)?$',
+			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+			'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+			'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+			'(\\#[-a-z\\d_]*)?$',
 		'i',
 	)
 	return pattern.test(url)
@@ -443,4 +444,45 @@ export function $formatDate(dateInput: string | number | Date): string {
 	return `${year}年${month}月${day}日 ${hour}:${minute}`
 }
 
+export function errCode<T extends Any>(error: any, defVal?: T) {
+	const msg = errToString(error)
+	return defVal ? { msg, ...defVal } : { msg }
+}
 
+export function errContent() {
+	errMsg('内容不正确')
+}
+
+export function errArg() {
+	errMsg('参数不正确')
+}
+
+export function errNotLoggedIn() {
+	errMsg('你还没有登录')
+}
+
+export function err403() {
+	errMsg('你没有这个权限')
+}
+
+export function isNowAroundUtcHour(targetHour: number) {
+	const now = new Date()
+
+	// 获取当前 UTC 小时和分钟
+	const utcHour = now.getUTCHours()
+	const utcMinute = now.getUTCMinutes()
+
+	// 计算目标时间（UTC）的时间戳（以分钟为单位）
+	const targetTimeInMinutes = targetHour * 60
+
+	// 当前时间的总 UTC 分钟
+	const nowTimeInMinutes = utcHour * 60 + utcMinute
+
+	// 差值（正负都接受）
+	const diff = Math.abs(nowTimeInMinutes - targetTimeInMinutes)
+
+	// 处理跨天情况，例如 targetHour 是 0，而当前时间是 23:58 UTC
+	const diffAlt = 1440 - diff // 24 * 60 = 1440
+
+	return diff <= 3 || diffAlt <= 3
+}

@@ -1,4 +1,4 @@
-import { $sc, l } from '..'
+import { $s, $sc, l } from '..'
 
 /*
 <div ref={outerContainer current}>
@@ -12,6 +12,7 @@ export type ScaleIniter = (scaler: Scaler) => void
 class Scaler {
 	heightElement!: HTMLElement
 	widthElement!: HTMLElement
+	offsetHorizontal = 0.01
 	#base = 320
 	set base(val: number) {
 		if ($sc(val)) this.#base = val
@@ -25,7 +26,11 @@ class Scaler {
 		this.onMainScaleChange?.(this.#mainScale)
 		if (typeof window === 'undefined') return
 		this.innerContainer.style.transform =
-			'translateX(-50%) scale(' + (this.mainScale + 0.01) + ', ' + this.mainScale + ')'
+			'translateX(-50%) scale(' +
+			(this.mainScale + this.offsetHorizontal) +
+			', ' +
+			this.mainScale +
+			')'
 	}
 	get mainScale() {
 		return this.#mainScale
@@ -110,7 +115,7 @@ export function enableScaler(
 			window.removeEventListener('resize', thr)
 			ro.disconnect()
 		},
-		setBase
+		setBase,
 	}
 }
 
@@ -119,13 +124,14 @@ export function enableScaler(
  * @param widthElement 容器
  * @param heightElement 容器
  * @param maxAspectRatio 请输入 Number(0.57) && 0.64
- * @returns 
+ * @returns
  */
 export const standardIniter: (args: {
 	maxAspectRatio?: number
 	setFullScreenWidth?: (x: number) => void
 	setFullContentHeight?: (x: number) => void
 	setMainScale?: (x: number) => void
+	offsetHorizontal?: number
 	heightElement?: HTMLElement
 	widthElement?: HTMLElement
 	base?: number
@@ -137,23 +143,25 @@ export const standardIniter: (args: {
 		setMainScale,
 		widthElement,
 		heightElement,
-		base
+		base,
+		offsetHorizontal,
 	}) =>
-		(scaler) => {
-			scaler.widthElement = widthElement || document.documentElement
-			scaler.heightElement = heightElement || document.documentElement
-			scaler.onMainScaleChange = setMainScale
-			scaler.base = base as number
-			scaler.scaleComputer = (scaler) => {
-				if (typeof window === 'undefined') return 1
-				const welement = scaler.widthElement
-				const helement = scaler.heightElement
-				const w = welement.clientWidth
-				const h = helement.clientHeight
-				const fullScreenWidth = Math.min(w, h * maxAspectRatio)
-				const fscl = fullScreenWidth / scaler.base
-				setFullScreenWidth?.(fullScreenWidth) // setFullScreenWidth 此引用不会过期
-				setFullContentHeight?.(h / fscl)
-				return fscl
-			}
+	(scaler) => {
+		scaler.widthElement = widthElement || document.documentElement
+		scaler.heightElement = heightElement || document.documentElement
+		scaler.onMainScaleChange = setMainScale
+		scaler.base = base as number
+		if ($sc(offsetHorizontal)) scaler.offsetHorizontal = offsetHorizontal
+		scaler.scaleComputer = (scaler) => {
+			if (typeof window === 'undefined') return 1
+			const welement = scaler.widthElement
+			const helement = scaler.heightElement
+			const w = welement.clientWidth
+			const h = helement.clientHeight
+			const fullScreenWidth = Math.min(w, h * maxAspectRatio)
+			const fscl = fullScreenWidth / scaler.base
+			setFullScreenWidth?.(fullScreenWidth) // setFullScreenWidth 此引用不会过期
+			setFullContentHeight?.(h / fscl)
+			return fscl
 		}
+	}

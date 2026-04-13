@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 import { $keys, $jsonParse } from '../modules/Store'
-import { Any } from '../modules/InterTypes/InterType'
+import { Any, Null } from '../modules/InterTypes/InterType'
 
 export function $isObject(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object'
@@ -552,19 +552,35 @@ function $bytesToAscii(bytes: Uint8Array, start: number, end: number) {
  * 说明：
  * - 会移除 `data:*;base64,` 前缀。
  * - 会移除所有空白字符并 trim。
- * - 非字符串输入会返回空字符串。
+ * - 会校验 base64 格式；不合法时返回 null。
+ * - 非字符串输入会返回 null。
  *
  * 返回值约定：
- * - 一定返回 `string`（不会返回 null/undefined）。
+ * - 返回合法的纯 base64；不合法时返回 `null`。
  */
-export function $purifyBase64(input: string | null | undefined) {
+export function $purifyBase64(input: string | Null): string | null {
 	if (typeof input !== 'string') {
-		return ''
+		return null
 	}
-	return input
+
+	const cleaned = input
 		.replace(/^data:[^;]+;base64,/i, '')
 		.replace(/\s+/g, '')
 		.trim()
+
+	if (!cleaned) {
+		return null
+	}
+
+	if (!/^[A-Za-z0-9+/]+={0,2}$/.test(cleaned)) {
+		return null
+	}
+
+	if (cleaned.length % 4 !== 0) {
+		return null
+	}
+
+	return cleaned
 }
 
 /**
@@ -578,8 +594,11 @@ export function $purifyBase64(input: string | null | undefined) {
  * 返回值约定：
  * - 一定返回非空 mime 字符串（不会返回 null/undefined/空串）。
  */
-export function $inferMimeTypeFormPureBase64(pureBase64: string | null | undefined) {
+export function $inferMimeTypeFormPureBase64(pureBase64: string | Null) {
 	const normalized = $purifyBase64(pureBase64)
+	if (!normalized) {
+		return 'image/png'
+	}
 	const bytes = $decodeBase64ToBytes(normalized)
 
 	if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
@@ -657,26 +676,25 @@ export function $inferMimeTypeFormPureBase64(pureBase64: string | null | undefin
  * 说明：
  * - 如果输入本来是 data URL，会清洗并标准化后返回。
  * - 如果输入是纯 base64，会自动推断 mime 并补齐 `data:*;base64,` 前缀。
- * - 非字符串或空字符串输入返回空字符串。
+ * - 非字符串、空字符串或不合法内容返回 null。
  *
  * 返回值约定：
- * - 一定返回 `string`（不会返回 null/undefined）。
+ * - 返回标准 data URL；若输入不合法则返回 `null`。
  */
-export function $toDataUrlFromBase64(base64WithDataOrPure: string | null | undefined) {
+export function $toDataUrlFromBase64(base64WithDataOrPure: string | Null): string | null {
 	if (typeof base64WithDataOrPure !== 'string') {
-		return ''
+		return null
 	}
-	const trimmed = base64WithDataOrPure.trim()
-	if (!trimmed) {
-		return ''
+	const pure = $purifyBase64(base64WithDataOrPure)
+	if (!pure) {
+		return null
 	}
-	if (/^data:[^;]+;base64,/i.test(trimmed)) {
-		const pure = $purifyBase64(trimmed)
+	try {
 		const mime =
-			/^data:([^;]+);base64,/i.exec(trimmed)?.[1] || $inferMimeTypeFormPureBase64(pure)
+			/^data:([^;]+);base64,/i.exec(base64WithDataOrPure.trim())?.[1] ||
+			$inferMimeTypeFormPureBase64(pure)
 		return `data:${mime};base64,${pure}`
+	} catch {
+		return null
 	}
-	const pure = $purifyBase64(trimmed)
-	const mime = $inferMimeTypeFormPureBase64(pure)
-	return `data:${mime};base64,${pure}`
 }

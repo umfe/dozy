@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import imageCompression, { Options } from 'browser-image-compression'
-
+import { $toDataUrlFromBase64 } from './Functions'
 
 export function web$setPathTarget(s: string) {
 	if (!s.startsWith('/')) s = '/' + s
@@ -108,8 +108,7 @@ export async function $copy(content: string) {
 	if (typeof window === 'undefined') return
 	if (navigator.clipboard?.writeText) {
 		try {
-			await navigator.clipboard
-				.writeText(content)
+			await navigator.clipboard.writeText(content)
 			return true
 		} catch (error) {
 			return $fallbackCopy(content)
@@ -145,26 +144,58 @@ export function web$encodeURI(hash?: string) {
 	return `${encodeURIComponent(location.pathname + location.search + (h || hash || ''))}`
 }
 
+export const $compressImageDefaultOptions: Options = {
+	/** 最大文件大小 (MB)，默认为无穷大 */
+	maxSizeMB: 0.5,
+	/** 是否使用 Web Worker (多线程) 进行压缩，避免卡顿 UI，默认为 true */
+	useWebWorker: true,
+	/** 最大宽度或高度，图片将缩放以适应此尺寸，默认为 undefined */
+	maxWidthOrHeight: 1920,
+	/** 初始压缩质量 (0-1)，默认为 1.0 */
+	// initialQuality: 1.0,
+	/** 最大迭代次数，默认为 10 */
+	// maxIteration: 10,
+	/** 是否保留 Exif 信息 (如拍摄时间、地点等)，默认为 false */
+	// preserveExif: false,
+	/** 输出文件的 MIME 类型，默认与原图相同 */
+	// fileType: 'image/jpeg',
+}
+
+async function $fileToDataUrl(file: File) {
+	return new Promise<string>((resolve, reject) => {
+		const reader = new FileReader()
+		reader.onload = () => {
+			if (typeof reader.result === 'string') {
+				resolve(reader.result)
+			} else {
+				reject(new Error('Failed to convert file to data URL.'))
+			}
+		}
+		reader.onerror = () => reject(new Error('Error reading file.'))
+		reader.readAsDataURL(file)
+	})
+}
+
+export async function $compressImageBase64(base64: string, options?: Options) {
+	const dataUrl = $toDataUrlFromBase64(base64)
+	if (!dataUrl) return ''
+
+	const mime = /^data:([^;]+);base64,/i.exec(dataUrl)?.[1] || 'image/jpeg'
+	const response = await fetch(dataUrl)
+	const blob = await response.blob()
+	const ext = mime.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg'
+	const file = new File([blob], `${nanoid()}.${ext}`, { type: blob.type || mime })
+	const compressedFile = await $compressImage(file, options)
+	return $fileToDataUrl(compressedFile)
+}
+
 export async function $compressImage(file: File, options?: Options): Promise<File>
 export async function $compressImage(files: File[], options?: Options): Promise<File[]>
-export async function $compressImage(input: File | File[], options?: Options): Promise<File | File[]> {
-	const defaultOptions: Options = {
-		/** 最大文件大小 (MB)，默认为无穷大 */
-		maxSizeMB: 0.5,
-		/** 是否使用 Web Worker (多线程) 进行压缩，避免卡顿 UI，默认为 true */
-		useWebWorker: true,
-		/** 最大宽度或高度，图片将缩放以适应此尺寸，默认为 undefined */
-		maxWidthOrHeight: 1920,
-		/** 初始压缩质量 (0-1)，默认为 1.0 */
-		// initialQuality: 1.0,
-		/** 最大迭代次数，默认为 10 */
-		// maxIteration: 10,
-		/** 是否保留 Exif 信息 (如拍摄时间、地点等)，默认为 false */
-		// preserveExif: false,
-		/** 输出文件的 MIME 类型，默认与原图相同 */
-		// fileType: 'image/jpeg',
-	}
-	const opts = { ...defaultOptions, ...options }
+export async function $compressImage(
+	input: File | File[],
+	options?: Options,
+): Promise<File | File[]> {
+	const opts = { ...$compressImageDefaultOptions, ...options }
 
 	const processFile = async (f: File) => {
 		try {
@@ -172,11 +203,7 @@ export async function $compressImage(input: File | File[], options?: Options): P
 			return new File([compressedBlob], f.name, { type: compressedBlob.type })
 		} catch (error) {
 			console.error('Image compression failed:', error)
-			return f // Return original file if compression fails? Or throw? Usually safer to return original or throw. User didn't specify error handling, but toast error might be good.
-			// Let's just throw for now so caller can handle, or return original. 
-			// Given the user wants to "encapsulate", I should probably handle it or let it bubble.
-			// Let's let it bubble up as the original code had try-catch in UploadAvatar.
-			throw error;
+			return f
 		}
 	}
 

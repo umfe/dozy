@@ -1,5 +1,8 @@
 export type Any = Items<any>
-export type Null = undefined | null
+export type Null = undefined | null | void
+export function isNull<T>(v: T | Null): v is Null {
+	return v === null || v === undefined || v === void 0
+}
 export type Nullable<T> = T | Null
 export type Items<T> = { [x: string]: T }
 

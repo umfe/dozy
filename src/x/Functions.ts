@@ -486,3 +486,197 @@ export function isNowAroundUtcHour(targetHour: number) {
 
 	return diff <= 3 || diffAlt <= 3
 }
+
+/**
+ * 将纯 base64 字符串解码为字节数组，兼容 Node 与浏览器环境。
+ *
+ * 说明：
+ * - 优先使用浏览器 `atob`，失败后回退到 Node `Buffer`。
+ * - 若输入为空或无法解码，返回空数组（长度为 0）。
+ *
+ * 返回值约定：
+ * - 一定返回 `Uint8Array`（不会返回 null/undefined）。
+ */
+function $decodeBase64ToBytes(base64: string) {
+	const pure = base64.trim()
+
+	if (!pure) {
+		return new Uint8Array(0)
+	}
+
+	try {
+		if (typeof atob === 'function') {
+			const binary = atob(pure)
+			const bytes = new Uint8Array(binary.length)
+			for (let i = 0; i < binary.length; i++) {
+				bytes[i] = binary.charCodeAt(i)
+			}
+			return bytes
+		}
+	} catch {
+		// noop
+	}
+
+	try {
+		if (typeof Buffer !== 'undefined') {
+			return Uint8Array.from(Buffer.from(pure, 'base64'))
+		}
+	} catch {
+		// noop
+	}
+
+	return new Uint8Array(0)
+}
+
+/**
+ * 将字节数组指定区间转成 ASCII 字符串。
+ *
+ * 说明：
+ * - 仅做逐字节 ASCII 转换，不做编码探测。
+ * - 当区间越界时会自动截断到可读范围。
+ *
+ * 返回值约定：
+ * - 一定返回 `string`（不会返回 null/undefined）。
+ */
+function $bytesToAscii(bytes: Uint8Array, start: number, end: number) {
+	let out = ''
+	for (let i = start; i < end && i < bytes.length; i++) {
+		out += String.fromCharCode(bytes[i])
+	}
+	return out
+}
+
+/**
+ * 清洗 base64 输入，统一得到“纯 base64”（不含 data URL 前缀）。
+ *
+ * 说明：
+ * - 会移除 `data:*;base64,` 前缀。
+ * - 会移除所有空白字符并 trim。
+ * - 非字符串输入会返回空字符串。
+ *
+ * 返回值约定：
+ * - 一定返回 `string`（不会返回 null/undefined）。
+ */
+export function $purifyBase64(input: string | null | undefined) {
+	if (typeof input !== 'string') {
+		return ''
+	}
+	return input
+		.replace(/^data:[^;]+;base64,/i, '')
+		.replace(/\s+/g, '')
+		.trim()
+}
+
+/**
+ * 基于“纯 base64”推断图片 mime 类型。
+ *
+ * 说明：
+ * - 自动支持：jpeg/png/gif/webp/bmp/tiff/avif/heic/x-icon。
+ * - 输入可为纯 base64 或 data URL，内部会先清洗。
+ * - 无法识别时回退为 `image/png`。
+ *
+ * 返回值约定：
+ * - 一定返回非空 mime 字符串（不会返回 null/undefined/空串）。
+ */
+export function $inferMimeTypeFormPureBase64(pureBase64: string | null | undefined) {
+	const normalized = $purifyBase64(pureBase64)
+	const bytes = $decodeBase64ToBytes(normalized)
+
+	if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+		return 'image/jpeg'
+	}
+	if (
+		bytes.length >= 8 &&
+		bytes[0] === 0x89 &&
+		bytes[1] === 0x50 &&
+		bytes[2] === 0x4e &&
+		bytes[3] === 0x47 &&
+		bytes[4] === 0x0d &&
+		bytes[5] === 0x0a &&
+		bytes[6] === 0x1a &&
+		bytes[7] === 0x0a
+	) {
+		return 'image/png'
+	}
+	if (
+		bytes.length >= 6 &&
+		($bytesToAscii(bytes, 0, 6) === 'GIF87a' || $bytesToAscii(bytes, 0, 6) === 'GIF89a')
+	) {
+		return 'image/gif'
+	}
+	if (
+		bytes.length >= 12 &&
+		$bytesToAscii(bytes, 0, 4) === 'RIFF' &&
+		$bytesToAscii(bytes, 8, 12) === 'WEBP'
+	) {
+		return 'image/webp'
+	}
+	if (bytes.length >= 2 && bytes[0] === 0x42 && bytes[1] === 0x4d) {
+		return 'image/bmp'
+	}
+	if (
+		bytes.length >= 4 &&
+		((bytes[0] === 0x49 && bytes[1] === 0x49 && bytes[2] === 0x2a && bytes[3] === 0x00) ||
+			(bytes[0] === 0x4d && bytes[1] === 0x4d && bytes[2] === 0x00 && bytes[3] === 0x2a))
+	) {
+		return 'image/tiff'
+	}
+	if (
+		bytes.length >= 12 &&
+		$bytesToAscii(bytes, 4, 8) === 'ftyp' &&
+		$bytesToAscii(bytes, 8, 12) === 'avif'
+	) {
+		return 'image/avif'
+	}
+	if (
+		bytes.length >= 12 &&
+		$bytesToAscii(bytes, 4, 8) === 'ftyp' &&
+		($bytesToAscii(bytes, 8, 12) === 'heic' ||
+			$bytesToAscii(bytes, 8, 12) === 'heix' ||
+			$bytesToAscii(bytes, 8, 12) === 'hevc' ||
+			$bytesToAscii(bytes, 8, 12) === 'hevx')
+	) {
+		return 'image/heic'
+	}
+	if (
+		bytes.length >= 8 &&
+		bytes[0] === 0x00 &&
+		bytes[1] === 0x00 &&
+		bytes[2] === 0x01 &&
+		bytes[3] === 0x00
+	) {
+		return 'image/x-icon'
+	}
+
+	return 'image/png'
+}
+
+/**
+ * 将“纯 base64 或 data URL”统一转成标准 data URL。
+ *
+ * 说明：
+ * - 如果输入本来是 data URL，会清洗并标准化后返回。
+ * - 如果输入是纯 base64，会自动推断 mime 并补齐 `data:*;base64,` 前缀。
+ * - 非字符串或空字符串输入返回空字符串。
+ *
+ * 返回值约定：
+ * - 一定返回 `string`（不会返回 null/undefined）。
+ */
+export function $toDataUrlFromBase64(base64WithDataOrPure: string | null | undefined) {
+	if (typeof base64WithDataOrPure !== 'string') {
+		return ''
+	}
+	const trimmed = base64WithDataOrPure.trim()
+	if (!trimmed) {
+		return ''
+	}
+	if (/^data:[^;]+;base64,/i.test(trimmed)) {
+		const pure = $purifyBase64(trimmed)
+		const mime =
+			/^data:([^;]+);base64,/i.exec(trimmed)?.[1] || $inferMimeTypeFormPureBase64(pure)
+		return `data:${mime};base64,${pure}`
+	}
+	const pure = $purifyBase64(trimmed)
+	const mime = $inferMimeTypeFormPureBase64(pure)
+	return `data:${mime};base64,${pure}`
+}

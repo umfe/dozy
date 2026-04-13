@@ -1,6 +1,6 @@
 export type Any = Items<any>
-export type Null<T> = T | undefined | null
-export type Nullable<T> = Null<T>
+export type Null = undefined | null
+export type Nullable<T> = T | Null
 export type Items<T> = { [x: string]: T }
 
 export type Hel = HTMLElement

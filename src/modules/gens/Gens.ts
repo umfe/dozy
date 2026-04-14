@@ -109,7 +109,7 @@ export function getColorMap(dark: boolean = false) {
 	const map = [
 		'#f55', // 0
 		'#f85', // 1
-		'#ff5', // 2
+		'#fa0', // 2
 		'#8f5', // 3
 		'#5f5', // 4
 		'#5f8', // 5
@@ -119,7 +119,9 @@ export function getColorMap(dark: boolean = false) {
 		'#f58', // 9
 	]
 	return dark
-		? map.map((color) => color.replace(/f/g, 'a').replace(/5/g, '0').replace(/8/g, '5'))
+		? map.map((color) =>
+				color.replace(/a/g, '5').replace(/f/g, 'a').replace(/5/g, '0').replace(/8/g, '5'),
+			)
 		: map
 }
 
@@ -180,17 +182,17 @@ function __GensStringToArray(input: string): StringNode {
 			if (char === '{') {
 				// 将当前累积的字符作为字符串推入栈顶的数组
 				if (currentChunk) {
-					; (<any>stack[stack.length - 1]).push(currentChunk)
+					;(<any>stack[stack.length - 1]).push(currentChunk)
 					currentChunk = ''
 				}
 				// 创建一个新的数组，推入栈顶，并作为新的栈顶
 				const newArray: any[] = []
-					; (<any>stack[stack.length - 1]).push(newArray)
+				;(<any>stack[stack.length - 1]).push(newArray)
 				stack.push(newArray)
 			} else if (char === '}') {
 				// 将当前累积的字符作为字符串推入栈顶的数组
 				if (currentChunk) {
-					; (<any>stack[stack.length - 1]).push(currentChunk)
+					;(<any>stack[stack.length - 1]).push(currentChunk)
 					currentChunk = ''
 				}
 				// 弹出栈顶，回到上一层级
@@ -203,7 +205,7 @@ function __GensStringToArray(input: string): StringNode {
 
 		// 处理最后可能剩余的字符
 		if (currentChunk) {
-			; (<any>stack[stack.length - 1]).push(currentChunk)
+			;(<any>stack[stack.length - 1]).push(currentChunk)
 		}
 
 		return <any>stack[0]

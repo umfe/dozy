@@ -781,6 +781,15 @@ export function $checkValidEmailWithUnicode(email?: string) {
 	if (!$isValidEmailWithUnicode(email)) errMsg('Invalid email address')
 }
 
+export const shanghaiDateFormatter = new Intl.DateTimeFormat('zh-CN', {
+	timeZone: 'Asia/Shanghai',
+	year: 'numeric',
+	month: 'numeric',
+	day: 'numeric',
+	hour: '2-digit',
+	minute: '2-digit',
+	hour12: false,
+})
 /**
  * 将日期输入格式化为 `YYYY年M月D日 HH:mm`。
  *
@@ -789,11 +798,15 @@ export function $checkValidEmailWithUnicode(email?: string) {
  */
 export function $formatDate(dateInput: string | number | Date): string {
 	const date = new Date(dateInput)
-	const year = date.getFullYear()
-	const month = date.getMonth() + 1
-	const day = date.getDate()
-	const hour = date.getHours().toString().padStart(2, '0')
-	const minute = date.getMinutes().toString().padStart(2, '0')
+	const parts = shanghaiDateFormatter.formatToParts(date)
+	const getPart = (type: Intl.DateTimeFormatPartTypes) =>
+		parts.find((part) => part.type === type)?.value ?? ''
+
+	const year = getPart('year')
+	const month = getPart('month')
+	const day = getPart('day')
+	const hour = getPart('hour')
+	const minute = getPart('minute')
 
 	return `${year}年${month}月${day}日 ${hour}:${minute}`
 }

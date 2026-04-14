@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { $keys, $jsonParse } from '../modules/Store'
+import { $keys, $jsonParse, $jsonStringify } from '../modules/Store'
 import { Any, Null } from '../modules/InterTypes/InterType'
 
 export function $isObject(value: unknown): value is Record<string, unknown> {
@@ -698,3 +698,16 @@ export function $toDataUrlFromBase64(base64WithDataOrPure: string | Null): strin
 		return null
 	}
 }
+
+export const $getHue = (json: Object) => {
+	let f = ''
+	try {
+		f = $jsonStringify(json)
+	} catch (e) {
+		f = String(json)
+	}
+	return $stringToRange(f, 360)
+}
+
+export const $borderColor = (json: any) => `hsl(${$getHue(json)}, 100%, 33%)`
+export const $backgroundColor = (json: any) => `hsl(${$getHue(json)}, 100%, 40%)`

@@ -33,25 +33,25 @@ const customColorMap: Record<string, string> = {
 };
 
 /**
- * Register a custom color alias.
- * @param name The name of the alias (e.g., 'abc', 'myColor')
- * @param color The valid color string it maps to (e.g., '#ff0000', 'red')
+ * 注册一个自定义颜色别名。
+ * @param name 别名名称，例如 `abc`、`myColor`。
+ * @param color 别名实际映射到的合法颜色字符串，例如 `#ff0000`、`red`。
  */
 export function registerCustomColor(name: string, color: string) {
     customColorMap[name] = color;
 }
 
 /**
- * Smartly parses a color string.
- * Supports:
- * - All standard CSS colors (names, hex, rgb, hsl, oklch, etc.) via culori.
- * - Hex strings without '#' (e.g., 'ff5555', 'abc', 'aabbccdd').
- * - Custom aliases registered via registerCustomColor.
- * - Existing Color objects (passed through).
+ * 智能解析颜色字符串。
+ * 支持：
+ * - 通过 culori 解析所有标准 CSS 颜色（名称、hex、rgb、hsl、oklch 等）。
+ * - 不带 `#` 的十六进制字符串（如 `ff5555`、`abc`、`aabbccdd`）。
+ * - 通过 `registerCustomColor` 注册的自定义别名。
+ * - 已经是 `Color` 对象的输入（直接透传）。
  * 
- * @param input The color string or Color object to parse.
- * @param fallback Optional fallback color string if parsing fails.
- * @returns The parsed Color object or undefined if invalid.
+ * @param input 要解析的颜色字符串或 `Color` 对象。
+ * @param fallback 解析失败时可选的兜底颜色字符串。
+ * @returns 解析成功时返回 `Color` 对象，失败时返回 `undefined`。
  */
 export function smartParse(input: string | Color | any, fallback?: string): Color | undefined {
     // If input is already a Color object (has 'mode'), return it directly
@@ -90,9 +90,9 @@ export function smartParse(input: string | Color | any, fallback?: string): Colo
 }
 
 /**
- * Smartly parses a color and returns a CSS string.
- * Defaults to Hex for sRGB colors, or CSS function for others (like oklch).
- * @param input The color string or object.
+ * 智能解析颜色并返回对应的 CSS 字符串。
+ * 对 sRGB 颜色通常会输出 Hex，其它颜色空间可能输出 CSS 函数形式（如 oklch）。
+ * @param input 颜色字符串或颜色对象。
  */
 export function smartString(input: string | Color | any, fallback?: string): string | undefined {
     const parsed = smartParse(input, fallback);
@@ -101,20 +101,20 @@ export function smartString(input: string | Color | any, fallback?: string): str
 }
 
 /**
- * Check if a color string is valid (smartly).
- * @param input The color string or object.
+ * 智能判断一个颜色输入是否有效。
+ * @param input 颜色字符串或颜色对象。
  */
 export function isValidColor(input: string | Color | any): boolean {
     return !!smartParse(input);
 }
 
 /**
- * Calculates the brightness of a color.
- * Uses the Rec. 601 luma formula: (R * 299 + G * 587 + B * 114) / 1000.
- * Returns a value between 0 (black) and 1 (white).
+ * 计算颜色的亮度。
+ * 使用 Rec. 601 亮度公式：`(R * 299 + G * 587 + B * 114) / 1000`。
+ * 返回值范围通常在 0（黑）到 1（白）之间。
  * 
- * @param input The color string or object to check.
- * @returns The brightness value (0-1), or 0 if invalid.
+ * @param input 要检测的颜色字符串或对象。
+ * @returns 返回亮度值（0-1）；如果颜色无效则返回 `0`。
  */
 export function getBrightness(input: string | Color | any): number {
     const color = smartParse(input);
@@ -133,11 +133,11 @@ export function getBrightness(input: string | Color | any): number {
 }
 
 /**
- * Converts a color to an RGBA array [r, g, b, a].
- * RGB values are 0-255, Alpha is 0-1.
+ * 将颜色转换为 RGBA 数组 `[r, g, b, a]`。
+ * 其中 RGB 范围是 0-255，Alpha 范围是 0-1。
  * 
- * @param input The color string or object to convert.
- * @returns [r, g, b, a] or undefined if invalid.
+ * @param input 要转换的颜色字符串或对象。
+ * @returns 转换成功时返回 `[r, g, b, a]`，无效时返回 `undefined`。
  */
 export function toRgbaArray(input: string | Color | any): [number, number, number, number] | undefined {
     const color = smartParse(input);
@@ -155,9 +155,9 @@ export function toRgbaArray(input: string | Color | any): [number, number, numbe
 }
 
 /**
- * Converts a color to a Hex string.
- * @param input The color string or object.
- * @returns Hex string (e.g. #ff0000) or undefined.
+ * 将颜色转换为 Hex 字符串。
+ * @param input 颜色字符串或颜色对象。
+ * @returns 成功时返回如 `#ff0000` 这样的字符串，失败时返回 `undefined`。
  */
 export function toHexString(input: string | Color | any): string | undefined {
     const color = smartParse(input);
@@ -166,13 +166,11 @@ export function toHexString(input: string | Color | any): string | undefined {
 }
 
 /**
- * Converts a color to an RGB/RGBA string.
- * Uses modern comma-separated syntax for compatibility if preferred, or standard CSS.
- * Note: culori's formatRgb might use space-separated syntax (CSS Color 4).
- * This function forces comma-separated legacy syntax: rgb(r, g, b) or rgba(r, g, b, a).
+ * 将颜色转换为 RGB/RGBA 字符串。
+ * 为兼容性考虑，这里强制输出旧式逗号分隔语法：`rgb(r, g, b)` 或 `rgba(r, g, b, a)`。
  * 
- * @param input The color string or object.
- * @returns RGB/RGBA string or undefined.
+ * @param input 颜色字符串或颜色对象。
+ * @returns 成功时返回 RGB/RGBA 字符串，失败时返回 `undefined`。
  */
 export function toRgbString(input: string | Color | any): string | undefined {
     const arr = toRgbaArray(input);
@@ -186,11 +184,11 @@ export function toRgbString(input: string | Color | any): string | undefined {
 }
 
 /**
- * Converts a color to an HSL/HSLA string.
- * Forces legacy comma-separated syntax: hsl(h, s%, l%) or hsla(h, s%, l%, a).
+ * 将颜色转换为 HSL/HSLA 字符串。
+ * 这里强制输出旧式逗号分隔语法：`hsl(h, s%, l%)` 或 `hsla(h, s%, l%, a)`。
  * 
- * @param input The color string or object.
- * @returns HSL/HSLA string or undefined.
+ * @param input 颜色字符串或颜色对象。
+ * @returns 成功时返回 HSL/HSLA 字符串，失败时返回 `undefined`。
  */
 export function toHslString(input: string | Color | any): string | undefined {
     const color = smartParse(input);

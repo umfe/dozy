@@ -49,11 +49,33 @@ class Scaler {
 	onMainScaleChange?: (scale: number) => void
 
 	innerContainer
+	/**
+	 * 创建内部缩放器状态对象。
+	 *
+	 * @param innerContainer 需要接收宽度与 transform 更新的内部元素。
+	 */
 	constructor(innerContainer: HTMLElement) {
 		this.innerContainer = innerContainer
 	}
 }
 
+/**
+ * 为固定宽度的内部容器启用响应式缩放行为。
+ *
+ * 典型结构：
+ * - `outerContainer` 作为高度占位容器。
+ * - 第一个子元素或显式传入的 `innerContainer` 会通过 CSS transform 进行视觉缩放。
+ *
+ * 运行时行为：
+ * - 在非浏览器环境下会直接返回 `undefined`。
+ * - 如果无法解析出有效的内部容器，会直接抛错。
+ * - 会挂载 `resize` 和 `ResizeObserver` 监听。
+ *
+ * @param outerContainer 外层包裹元素。
+ * @param initer 可选初始化器，用于配置内部 `Scaler` 实例。
+ * @param innerContainer 可选的内部缩放元素，默认取 `outerContainer.children[0]`。
+ * @returns 在浏览器环境下返回包含 `resizer`、`clean`、`setBase` 方法的对象；否则返回 `undefined`。
+ */
 export function enableScaler(
 	outerContainer: HTMLElement,
 	initer?: ScaleIniter,
@@ -120,11 +142,20 @@ export function enableScaler(
 }
 
 /**
- * Hello
- * @param widthElement 容器
- * @param heightElement 容器
- * @param maxAspectRatio 请输入 Number(0.57) && 0.64
- * @returns
+ * 构建一个适用于常见视口布局的标准缩放初始化器。
+ *
+ * 返回的初始化器会配置宽高测量元素，并根据可用宽度与可选的最大宽高比计算缩放比例。
+ *
+ * @param args 初始化配置项。
+ * @param args.maxAspectRatio 计算可用宽度时允许的最大 `width / height` 比例，默认 `Infinity`。
+ * @param args.setFullScreenWidth 可选回调，用于接收计算后的可用宽度。
+ * @param args.setFullContentHeight 可选回调，用于接收缩放后的虚拟内容高度。
+ * @param args.setMainScale 可选回调，在主缩放值变化时触发。
+ * @param args.offsetHorizontal 可选的水平补偿值。
+ * @param args.heightElement 可选高度测量元素，默认使用 `document.documentElement`。
+ * @param args.widthElement 可选宽度测量元素，默认使用 `document.documentElement`。
+ * @param args.base 可选基础内容宽度。
+ * @returns 返回一个可供 `enableScaler` 使用的 `ScaleIniter` 函数。
  */
 export const standardIniter: (args: {
 	maxAspectRatio?: number

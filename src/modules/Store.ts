@@ -60,6 +60,16 @@ export const $Response = typeof Response === 'undefined' ? undefined : Response
 
 // --- Console ---
 
+/**
+ * 输出一个值到控制台，并原样返回该值。
+ *
+ * 适合在表达式链中做内联调试。
+ *
+ * @typeParam T 第一个参数的类型。
+ * @param a 主要输出值，同时也是返回值。
+ * @param x 其余会继续传给 `console.log` 的附加参数。
+ * @returns 原样返回传入的 `a`。
+ */
 export const $log = <T>(a?: T, ...x: any[]) => {
 	console.log(a, ...x) // Allow user to override console.log
 	return a

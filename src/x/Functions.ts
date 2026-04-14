@@ -2,9 +2,28 @@ import { AxiosError } from 'axios'
 import { $keys, $jsonParse, $jsonStringify } from '../modules/Store'
 import { Any, Null } from '../modules/InterTypes/InterType'
 
+/**
+ * 判断一个值是否为非 `null` 的对象。
+ *
+ * @param value 要检测的值。
+ * @returns 当值是对象且不为 `null` 时返回 `true`，否则返回 `false`。
+ */
 export function $isObject(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object'
 }
+
+/**
+ * 使用当前运行环境中可用的最佳方式深拷贝一个值。
+ *
+ * 行为说明：
+ * - 优先使用 `structuredClone`。
+ * - 不可用时回退到 `JSON.stringify` / `JSON.parse`。
+ * - JSON 方案会丢失函数、`undefined`、循环引用以及部分类实例信息。
+ *
+ * @typeParam T 输入与返回值的类型。
+ * @param value 源值。
+ * @returns 返回深拷贝后的结果，但具体保真度取决于底层拷贝方案。
+ */
 export function $deepClone<T>(value: T): T {
 	if (typeof structuredClone === 'function') {
 		// @ts-ignore -- structuredClone exists in modern runtimes
@@ -20,6 +39,13 @@ export function $deepClone<T>(value: T): T {
 // 	} as (...args: Parameters<T>) => void
 // }
 // export function throttle<T extends (...args: any[]) => any>(fn: T, limit = 200) {
+
+/**
+ * 将字符串首字母转为大写。
+ *
+ * @param s 输入字符串。
+ * @returns 如果输入为空则原样返回；否则返回首字符大写后的字符串。
+ */
 // 	let inThrottle = false
 // 	return function (...args: Parameters<T>) {
 // 		if (!inThrottle) {
@@ -33,10 +59,31 @@ export function $capitalize(s: string) {
 	if (!s) return s
 	return s.charAt(0).toUpperCase() + s.slice(1)
 }
+
+/**
+ * 将数字限制在闭区间 `[min, max]` 内。
+ *
+ * @param n 输入数字。
+ * @param min 最小值。
+ * @param max 最大值。
+ * @returns 小于最小值时返回 `min`，大于最大值时返回 `max`，否则返回原值。
+ */
 export function $clamp(n: number, min: number, max: number) {
 	return Math.min(max, Math.max(min, n))
 }
 
+/**
+ * 将一个对象中的配置项合并到目标对象中。
+ *
+ * 行为说明：
+ * - 如果 `obj` 不存在，则直接返回 `thiz`。
+ * - 当源字段和目标字段都是对象时，会尝试调用目标上的 `$loadOpt` 继续递归合并。
+ * - 否则直接覆盖赋值。
+ *
+ * @param thiz 目标对象，会被原地修改。
+ * @param obj 可选的源对象。
+ * @returns 返回被修改后的目标对象 `thiz`。
+ */
 export function $loadOpt(thiz: Object, obj?: Object): any {
 	if (!obj) return thiz
 	let ks = $keys(obj)
@@ -52,30 +99,70 @@ export function $loadOpt(thiz: Object, obj?: Object): any {
 	return thiz
 }
 
+/**
+ * 抛出一个带指定消息的 `Error`。
+ *
+ * @param msg 错误消息。
+ * @returns 不会返回。
+ * @throws 始终抛出 `Error`。
+ */
 export function errMsg(msg: string) {
 	throw new Error(msg)
 }
 
+/**
+ * 去掉 HTML 标记并返回纯文本内容。
+ *
+ * @param fragment HTML 片段字符串。
+ * @returns 返回去除换行并裁剪首尾空白后的纯文本。
+ */
 export function $pureText(fragment: string) {
 	return (new DOMParser().parseFromString(fragment, 'text/html').body.textContent || '')
 		.replace(/\n/g, '')
 		.trim()
 }
 
+/**
+ * 判断一个值是否为普通对象记录。
+ *
+ * @param o 要检测的值。
+ * @returns 非 `null` 对象时返回 `true`，否则返回 `false`。
+ */
 export function $oc(o: any): o is Record<string, any> {
 	return typeof o === 'object' && o !== null
 }
 
+/**
+ * 判断一个值是否为字符串，并可选要求其非空。
+ *
+ * @param s 要检测的值。
+ * @param val 为真时，除了要求是字符串外，还要求 `!!s` 为真。
+ * @returns 是否满足对应的字符串条件。
+ */
 export function $s(s: any, val?: boolean): s is string {
 	if (typeof s !== 'string') return false
 	return val ? !!s : true
 }
 
+/**
+ * 判断一个值是否为有限数字。
+ *
+ * @param n 要检测的值。
+ * @returns 只有在值是数字且不是 `NaN`、`Infinity`、`-Infinity` 时才返回 `true`。
+ */
 export function $sc(n: any): n is number {
 	if (typeof n !== 'number') return false
 	return isFinite(n)
 }
 
+/**
+ * 对循环索引执行加减步进，并保证结果始终落在循环范围内。
+ *
+ * @param v 当前值。
+ * @param t 循环长度，也可理解为上边界（不包含）。
+ * @param plus 步进值，默认为 `1`。
+ * @returns 返回落在 `[0, t)` 区间内的循环结果。
+ */
 export function $lplus(v: number, t: number, plus: number = 1) {
 	v += plus
 	while (v >= t) v -= t
@@ -83,6 +170,13 @@ export function $lplus(v: number, t: number, plus: number = 1) {
 	return v
 }
 
+/**
+ * 使用循环索引方式读取数组项。
+ *
+ * @param arr 源数组。
+ * @param i 目标索引，可以是负数，也可以超过数组长度。
+ * @returns 返回折算后的数组项；如果数组为空则返回 `undefined`。
+ */
 export function $lindex(arr: Array<any>, i: number) {
 	let l = arr.length
 	if (l === 0) return
@@ -95,12 +189,26 @@ export function $lindex(arr: Array<any>, i: number) {
 	return arr[i]
 }
 
+/**
+ * 校验一个简单标识符是否合法。
+ *
+ * 允许字符：字母、数字、连字符 `-`、下划线 `_`。
+ *
+ * @param id 待校验的标识符。
+ * @returns 当 `id` 非空且符合规则时返回 `true`，否则返回 `false`。
+ */
 export function $validName(id?: string): id is string {
 	return !!id && /^[a-zA-Z0-9-_]+$/.test(id)
 }
 
 export type FileType = 'text' | 'image' | 'audio' | 'video' | 'font' | 'unknown'
 
+/**
+ * 根据文件扩展名推断文件的大致类型。
+ *
+ * @param fileName 文件名或路径。
+ * @returns 可能返回 `text`、`image`、`audio`、`video`、`font` 或 `unknown`。
+ */
 export function $getFileType(fileName: string): FileType {
 	const extension = fileName.split('.').pop()?.toLowerCase()
 	if (!extension) return 'unknown'
@@ -120,6 +228,12 @@ export function $getFileType(fileName: string): FileType {
 	return 'unknown'
 }
 
+/**
+ * 判断一个字符串是否看起来像 URL，允许省略协议头。
+ *
+ * @param url 待检测的 URL 字符串。
+ * @returns 输入为空时返回 `false`；否则返回是否匹配内部 URL 规则。
+ */
 export function $isValidOrBriefURL(url?: string) {
 	if (!url) return false
 	let pattern = new RegExp(
@@ -134,6 +248,15 @@ export function $isValidOrBriefURL(url?: string) {
 	return pattern.test(url)
 }
 
+/**
+ * 将 tick 时间格式化为可读字符串。
+ *
+ * @param stampTicks 时间值，默认规则下 40 tick = 1 秒。
+ * @param short 为 `true` 时返回 `MM:SS`，否则返回 `HH:MM:SS`。
+ * @param unitS 为 `true` 时表示传入值单位是秒，函数内部会自动换算成 tick。
+ * @param exact 为 `true` 时会在末尾追加 `%xx`，表示更细的余数信息。
+ * @returns 返回格式化后的时间字符串；若输入不是有效数字，则按 `short` 返回 `00:00` 或 `00:00:00`。
+ */
 export function $getTimeString(
 	stampTicks: number,
 	short: boolean,
@@ -161,6 +284,17 @@ export function $getTimeString(
 	return exact ? result + '%' + String(sp).padStart(2, '0') : result
 }
 
+/**
+ * 在指定范围内生成随机整数。
+ *
+ * 参数语义：
+ * - 只传 `start` 时，返回 `[0, start)` 范围内的整数。
+ * - 同时传 `start`、`end` 时，返回 `[start, end)` 范围内的整数。
+ *
+ * @param start 当 `end` 省略时表示上限；否则表示下限。
+ * @param end 可选的上限（不包含）。
+ * @returns 返回目标范围内的随机整数；当范围无效时返回 `0`。
+ */
 export function $magic(start: number, end?: number): number {
 	if (typeof end !== 'number') {
 		if (start <= 1) return 0
@@ -173,6 +307,12 @@ export function $magic(start: number, end?: number): number {
 }
 
 // use nanoid
+/**
+ * 生成指定长度的伪随机字母数字字符串。
+ *
+ * @param len 目标长度，小于 `1` 时会被强制改为 `1`。
+ * @returns 返回长度恰好为 `len` 的随机字符串。
+ */
 export function $randomByte(len: number = 32) {
 	if (len < 1) len = 1
 	let s = ''
@@ -180,15 +320,41 @@ export function $randomByte(len: number = 32) {
 	return s.substring(0, len)
 }
 
+/**
+ * 解析 JSON 字符串，并读取其中某个点路径对应的值。
+ *
+ * @param s JSON 字符串。
+ * @param path 可选的点分隔路径，如 `a.b.c`。
+ * @param def 当输入为空或路径读取失败时使用的默认值。
+ * @returns 返回读取到的值；如果失败则返回 `def`。
+ */
 export function $rsValue(s: string = '', path?: string, def?: any) {
 	if (!s) return def
 	return $rvalue($jsonParse(s), path, def)
 }
 
+/**
+ * 按点路径给对象设置嵌套值。
+ *
+ * @param obj 目标对象。
+ * @param path 点分隔属性路径。
+ * @param value 要设置的值。
+ * @returns 返回最终写入的值。
+ */
 export function $rsetValue(obj: Object, path: string, value: any) {
 	return $rvalue(obj, path, value, true, true)
 }
 
+/**
+ * 使用点路径读取或设置对象中的嵌套属性。
+ *
+ * @param obj 目标对象。
+ * @param path 可选的点分隔路径；如果不传，则直接返回 `obj` 本身。
+ * @param def 默认值；在设置模式下也会作为要写入的值。
+ * @param sdef 为 `true` 时，缺失的中间对象或最终值可以按需用 `def` 创建。
+ * @param set 为 `true` 时强制进入设置模式，并把 `def` 写入最终路径。
+ * @returns 可能返回读取到的值、写入的值、默认值 `def`，或者原对象 `obj`，具体取决于路径情况与参数组合。
+ */
 export function $rvalue(
 	obj: Object,
 	path?: string,
@@ -228,10 +394,25 @@ export function $rvalue(
 	return target
 }
 
+/**
+ * 判断对象是否直接拥有某个属性。
+ *
+ * @param obj 要检查的对象。
+ * @param key 属性名。
+ * @returns 只有当属性是对象自身属性时才返回 `true`。
+ */
 export function $hasKey(obj: Object, key: string) {
 	return Object.hasOwnProperty.call(obj, key)
 }
 
+/**
+ * 安全地把未知值转换成适合日志或调试展示的短字符串。
+ *
+ * @param a 要序列化的值。
+ * @param maxLength 最大输出长度；小于等于 `0` 时表示不截断。
+ * @param deep 内部递归深度，用于处理序列化失败时的错误对象。
+ * @returns 返回字符串结果；必要时会附带截断标记或失败提示。
+ */
 function _maybeString(a: any, maxLength: number = 600, deep: number = 0) {
 	let x = ''
 	if (deep >= 6) x = '[Too deep]'
@@ -247,10 +428,23 @@ function _maybeString(a: any, maxLength: number = 600, deep: number = 0) {
 	return x
 }
 
+/**
+ * `_maybeString` 的对外包装函数。
+ *
+ * @param a 要转成字符串的值。
+ * @param maxLength 最大输出长度，默认为 `600`。
+ * @returns 返回相对安全的字符串表示。
+ */
 export function maybeString(a: any, maxLength: number = 600) {
 	return _maybeString(a, maxLength)
 }
 
+/**
+ * 将未知错误尽量转换为可读的错误消息。
+ *
+ * @param e 未知的错误值。
+ * @returns 返回尽可能提取出的错误消息；若是 Axios 错误且响应中存在 `data.msg`，会优先使用它。
+ */
 export function errToString(e: unknown): string {
 	if (e instanceof AxiosError) {
 		const o = e.response?.data?.msg
@@ -259,22 +453,53 @@ export function errToString(e: unknown): string {
 	return (e instanceof Error ? e.message : String(e)) || 'ERROR'
 }
 
+/**
+ * 以一个固定的小概率返回 `true`。
+ *
+ * @returns 当 `Math.random() > 0.8` 时返回 `true`，否则返回 `false`。
+ */
 export function smallChance() {
 	return Math.random() > 0.8
 }
 
+/**
+ * 判断一个值是否是指定构造函数的普通实例。
+ *
+ * @param obj 要检测的值。
+ * @param clas 期望的构造函数，默认为 `Object`。
+ * @returns 当 `obj` 非空且其 `constructor === clas` 时返回 `true`。
+ */
 export function $isPlainClass(obj: any, clas: Function = Object): boolean {
 	return typeof obj === 'object' && obj !== null && obj.constructor === clas
 }
 
+/**
+ * 将 Unicode 字符串编码为 Base64。
+ *
+ * @param str 源字符串。
+ * @returns 返回 Base64 字符串。
+ */
 export function $encodeUnicodeToBase64(str: string) {
 	return btoa(unescape(encodeURIComponent(str)))
 }
 
+/**
+ * 将 Base64 字符串解码回 Unicode 文本。
+ *
+ * @param base64 Base64 编码字符串。
+ * @returns 返回解码后的 Unicode 字符串。
+ */
 export function $decodeBase64ToUnicode(base64: string) {
 	return decodeURIComponent(escape(atob(base64)))
 }
 
+/**
+ * 读取浏览器 `File`，并返回不带 data URL 前缀的纯 Base64 内容。
+ *
+ * @param file 要读取的文件对象。
+ * @returns 返回一个 Promise，成功时得到纯 Base64 字符串。
+ * @throws 当文件读取失败或结果不是字符串时，Promise 会被拒绝。
+ */
 export async function $fileToBase64(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader()
@@ -293,6 +518,12 @@ export async function $fileToBase64(file: File): Promise<string> {
 	})
 }
 
+/**
+ * 将 Base64 字符串解码为原始字节数组。
+ *
+ * @param base64 纯 Base64 字符串。
+ * @returns 返回解码后的 `Uint8Array`。
+ */
 export function $decodeBase64ToBinary(base64: string) {
 	const binaryStr = atob(base64)
 	const bytes = new Uint8Array(binaryStr.length)
@@ -302,26 +533,69 @@ export function $decodeBase64ToBinary(base64: string) {
 	return bytes
 }
 
+/**
+ * 仅在边界值有效时，将数字限制到对应范围内。
+ *
+ * @param v 输入值。
+ * @param min 可选最小值。
+ * @param max 可选最大值。
+ * @returns 返回处理后的结果值。
+ */
 export function $setRange(v: number, min?: number, max?: number) {
 	if ($sc(min) && <number>min > v) v = <number>min
 	if ($sc(max) && <number>max < v) v = <number>max
 	return v
 }
 
+/**
+ * 判断一个值是否位于某个中心点的对称范围内。
+ *
+ * @param v 要检测的值。
+ * @param mid 中心值。
+ * @param range 左右两侧允许的偏移范围。
+ * @returns 当 `v` 位于 `[mid - range, mid + range]` 区间内时返回 `true`。
+ */
 export function $inRange2(v: number, mid: number, range: number) {
 	return $inRange(v, mid - range, mid + range)
 }
 
+/**
+ * 判断一个数是否位于可选的最小值和最大值之间。
+ *
+ * @param v 要检测的值。
+ * @param min 可选最小值。
+ * @param max 可选最大值。
+ * @returns 如果违反任一已提供边界则返回 `false`，否则返回 `true`。
+ */
 export function $inRange(v: number, min?: number, max?: number) {
 	if ($sc(min) && <number>min > v) return false
 	if ($sc(max) && <number>max < v) return false
 	return true
 }
 
+/**
+ * 按指定分隔符拆分字符串。
+ *
+ * @param str 原始字符串。
+ * @param cut 分隔符，默认为 `^`。
+ * @returns 返回 `str.split(cut)` 的结果数组。
+ */
 export function $strings(str: string, cut: string = '^') {
 	return str.split(cut)
 }
 
+/**
+ * 生成一个按成对字符串参数进行处理的辅助函数。
+ *
+ * 规则说明：
+ * - 如果只传了一个参数且其中包含 `^`，会先按 `^` 拆分。
+ * - 然后按 `(s1, s2)` 两两配对执行处理。
+ * - 如果某组缺少第二项，运行时该参数会是 `undefined`。
+ *
+ * @param f 成对处理函数。
+ * @param gap 每组结果之间插入的分隔字符串。
+ * @returns 返回一个新函数，用于把字符串列表合成为最终字符串。
+ */
 export function $genSSF(
 	f: (s1: string, s2: string) => string,
 	gap: string = '',
@@ -340,6 +614,12 @@ export function $genSSF(
 	}
 }
 
+/**
+ * 规范化多行字符串中的空白字符。
+ *
+ * @param s 输入字符串。
+ * @returns 返回压缩多余空行、规范行内空白并去除首尾空白后的字符串。
+ */
 export function xtrim(s: string) {
 	return s
 		.replace(/(\r?\n)+/g, '\n')
@@ -347,18 +627,42 @@ export function xtrim(s: string) {
 		.replace(/(^\s*|\s*$)/g, '')
 }
 
+/**
+ * 根据键值选择映射项，并在映射值为函数时执行它。
+ *
+ * @typeParam T 键类型。
+ * @typeParam V 非函数映射值类型。
+ * @param val 当前要选择的键。
+ * @param fs 键到函数或普通值的映射表。
+ * @returns 如果命中项是函数则返回函数执行结果，否则返回映射值本身。
+ */
 export function $if<T extends string | number | symbol, V>(val: T, fs: Record<T, Function | V>) {
 	const f = fs[val]
 	if (typeof f === 'function') return f()
 	return f as V
 }
 
+/**
+ * 获取数组或长度值对应的最后一个有效索引。
+ *
+ * @param items 数组本身或数字长度。
+ * @returns 返回 `max(length - 1, 0)` 的结果。
+ */
 export function $lastIndex(items: Array<any> | number) {
 	let i = $sc(items) ? <number>items : (<Array<any>>items).length
 	i -= 1
 	return i >= 0 ? i : 0
 }
 
+/**
+ * 将稀疏数组中的空洞补成显式的 `undefined`。
+ *
+ * 注意：该函数会修改原数组，同时返回一个浅拷贝。
+ *
+ * @typeParam T 元素类型。
+ * @param arr 可能包含空洞的数组。
+ * @returns 返回浅拷贝后的数组。
+ */
 export function $replaceHolesWithUndefined<T>(arr: Array<T | undefined>): Array<T | undefined> {
 	const newArr = arr.slice()
 	for (let i = 0; i < newArr.length; i++) {
@@ -369,6 +673,13 @@ export function $replaceHolesWithUndefined<T>(arr: Array<T | undefined>): Array<
 	return newArr
 }
 
+/**
+ * 将字符串稳定映射到 `[0, max)` 范围内的整数。
+ *
+ * @param str 源字符串。
+ * @param max 上界（不包含）。
+ * @returns 返回确定性的整数结果；即使字符串为空，也会得到合法范围内的值。
+ */
 export function $stringToRange(str: string, max: number): number {
 	str ||= ''
 	let hash = 5381
@@ -381,10 +692,28 @@ export function $stringToRange(str: string, max: number): number {
 	return Math.floor(value * max)
 }
 
+/**
+ * 去掉路径开头的 `/`。
+ *
+ * @param path 输入路径。
+ * @returns 如果路径有前导斜杠则返回去掉后的结果，否则原样返回。
+ */
 export function $rmvSlash(path: string) {
 	return path.startsWith('/') ? path.slice(1) : path
 }
 
+/**
+ * 解析紧凑编码的路径参数字符串。
+ *
+ * 规则：
+ * - 单个 `-` 表示参数分隔。
+ * - 双 `--` 表示字面量 `-`。
+ * - `_` 与 `%20` 会被还原为空格。
+ * - 双下划线 `__` 用于保留字面量下划线。
+ *
+ * @param path 编码后的路径字符串。
+ * @returns 返回解码后的参数数组。
+ */
 export function $parseParams(path: string): (string | undefined)[] {
 	path = $rmvSlash(path)
 	const parts: string[] = []
@@ -417,22 +746,47 @@ export function $parseParams(path: string): (string | undefined)[] {
 	return decoded
 }
 
+/**
+ * 给数字或数字字符串添加千分位分隔符。
+ *
+ * @param num 数字或可转为字符串的数字值。
+ * @returns 返回带千分位逗号的字符串。
+ */
 export function $formatWithCommas(num: number | string): string {
 	const [integerPart, decimalPart] = num.toString().split('.')
 	const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 	return decimalPart ? `${formattedInt}.${decimalPart}` : formattedInt
 }
 
+/**
+ * 校验邮箱地址是否符合支持 Unicode 字母的规则。
+ *
+ * @param email 待校验邮箱。
+ * @returns 符合规则时返回 `true`，否则返回 `false`。
+ */
 export function $isValidEmailWithUnicode(email?: string) {
 	email = email || ''
 	const regex = /^[\p{L}\p{N}._%+-]+@(?:[\p{L}\p{N}-]+\.)+[\p{L}]{2,}$/u
 	return regex.test(email)
 }
 
+/**
+ * 校验邮箱格式，不合法时直接抛错。
+ *
+ * @param email 待校验邮箱。
+ * @returns 合法时无返回值。
+ * @throws 当邮箱不合法时抛出错误。
+ */
 export function $checkValidEmailWithUnicode(email?: string) {
 	if (!$isValidEmailWithUnicode(email)) errMsg('Invalid email address')
 }
 
+/**
+ * 将日期输入格式化为 `YYYY年M月D日 HH:mm`。
+ *
+ * @param dateInput 任何可被 `Date` 构造函数接受的输入。
+ * @returns 返回格式化后的日期字符串。
+ */
 export function $formatDate(dateInput: string | number | Date): string {
 	const date = new Date(dateInput)
 	const year = date.getFullYear()
@@ -444,27 +798,67 @@ export function $formatDate(dateInput: string | number | Date): string {
 	return `${year}年${month}月${day}日 ${hour}:${minute}`
 }
 
+/**
+ * 将错误转换成一个始终包含 `msg` 字段的对象。
+ *
+ * @typeParam T 附加字段对象类型。
+ * @param error 错误来源。
+ * @param defVal 可选的附加字段对象。
+ * @returns 返回 `{ msg }` 或 `{ msg, ...defVal }`。
+ */
 export function errCode<T extends Any>(error: any, defVal?: T) {
 	const msg = errToString(error)
 	return defVal ? { msg, ...defVal } : { msg }
 }
 
+/**
+ * 抛出统一的“内容不正确”错误。
+ *
+ * @returns 不会返回。
+ * @throws 始终抛出错误。
+ */
 export function errContent() {
 	errMsg('内容不正确')
 }
 
+/**
+ * 抛出统一的“参数不正确”错误。
+ *
+ * @returns 不会返回。
+ * @throws 始终抛出错误。
+ */
 export function errArg() {
 	errMsg('参数不正确')
 }
 
+/**
+ * 抛出统一的“未登录”错误。
+ *
+ * @returns 不会返回。
+ * @throws 始终抛出错误。
+ */
 export function errNotLoggedIn() {
 	errMsg('你还没有登录')
 }
 
+/**
+ * 抛出统一的“没有权限”错误。
+ *
+ * @returns 不会返回。
+ * @throws 始终抛出错误。
+ */
 export function err403() {
 	errMsg('你没有这个权限')
 }
 
+/**
+ * 判断当前 UTC 时间是否接近指定的 UTC 整点。
+ *
+ * 当前实现允许前后约 3 分钟误差，并处理跨天情况。
+ *
+ * @param targetHour 目标 UTC 小时，通常应在 `0-23` 范围内。
+ * @returns 如果当前 UTC 时间与目标小时足够接近，则返回 `true`。
+ */
 export function isNowAroundUtcHour(targetHour: number) {
 	const now = new Date()
 

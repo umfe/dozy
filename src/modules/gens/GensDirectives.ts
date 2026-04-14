@@ -2,7 +2,6 @@ export let _res = (x: string) => x
 
 import { Items } from '../Interface.js'
 import { Gens, RainbowGen } from './Gens.js'
-
 export function __GensDirectives() {
 	let v: Items<(...args: string[]) => string> = {
 		icon: (args) => {

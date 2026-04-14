@@ -2,10 +2,27 @@ import { nanoid } from 'nanoid'
 import imageCompression, { Options } from 'browser-image-compression'
 import { $toDataUrlFromBase64 } from './Functions'
 
+/**
+ * 将当前历史记录替换为规范化后的路径。
+ *
+ * @param s 目标路径；如果没有以 `/` 开头会自动补上。
+ * @returns 无返回值。
+ */
 export function web$setPathTarget(s: string) {
 	if (!s.startsWith('/')) s = '/' + s
 	history.replaceState(null, '', s)
 }
+
+/**
+ * 读取并规范化当前浏览器地址信息。
+ *
+ * 行为说明：
+ * - 会识别 `#/...` 这种 hash 路由跳转，并把地址改写成规范路径。
+ * - 会去掉 `path` 前导 `/` 以及结尾的 `.html` / `.htm`。
+ * - 会去掉 `search` 前面的 `?`。
+ *
+ * @returns 返回一个描述当前地址状态的对象，包含 `href`、`origin`、`target`、`host`、`path`、`search`、`standardJump` 等字段。
+ */
 export function web$pathStartData() {
 	let o = {
 		href: '',
@@ -39,6 +56,17 @@ export function web$pathStartData() {
 	return o
 }
 let failed = false
+
+/**
+ * 在浏览器中开启轻量级的生产环境防调试保护。
+ *
+ * 副作用包括：
+ * - 禁用右键菜单。
+ * - 阻止 `F12` 和 `Ctrl+Shift+I`。
+ * - 周期性检测开发者工具是否可能被打开，若触发则跳转离开当前页。
+ *
+ * @returns 无返回值；在服务端环境下不会执行任何逻辑。
+ */
 export function web$enableProdProtector() {
 	if (typeof window === 'undefined') return
 	document.oncontextmenu = function (event: any) {
@@ -85,6 +113,16 @@ export function web$enableProdProtector() {
 		}
 	}, 80)
 }
+
+/**
+ * 在浏览器环境下把 `http:` 页面自动重定向到 `https:`。
+ *
+ * 例外情况：
+ * - `localhost`
+ * - `127.0.0.1`
+ *
+ * @returns 无返回值。
+ */
 export function web$enableHttpsRedirect() {
 	if (typeof window !== 'undefined') {
 		const { protocol, hostname, href } = window.location
@@ -97,12 +135,31 @@ export function web$enableHttpsRedirect() {
 			window.location.href = href.replace(/^http:/, 'https:')
 	}
 }
+
+/**
+ * 将当前页面重定向到另一个域名，同时保留路径、查询参数和哈希。
+ *
+ * @param newDomain 目标域名，可以带或不带结尾斜杠。
+ * @returns 无返回值；在服务端环境下直接返回。
+ */
 export function web$redirectToDomain(newDomain: string) {
 	if (typeof window === 'undefined') return
 	const { pathname, search, hash } = window.location
 	window.location.href = `${newDomain.replace(/\/$/, '')}${pathname}${search}${hash}`
 }
 
+/**
+ * 将文本复制到系统剪贴板。
+ *
+ * 行为说明：
+ * - 会先对传入内容执行 `trim()`。
+ * - 优先使用 `navigator.clipboard.writeText`。
+ * - 现代剪贴板接口失败时会回退到 `$fallbackCopy`。
+ * - 非浏览器环境下返回 `undefined`。
+ *
+ * @param content 要复制的文本内容。
+ * @returns 成功时返回 `true`，回退复制失败时返回 `false`，非浏览器环境下返回 `undefined`。
+ */
 export async function $copy(content: string) {
 	content = content?.trim() || ''
 	if (typeof window === 'undefined') return
@@ -117,6 +174,12 @@ export async function $copy(content: string) {
 	return $fallbackCopy(content)
 }
 
+/**
+ * 使用隐藏的 `<textarea>` 作为兼容方案执行复制。
+ *
+ * @param content 要复制的文本，会先被 `trim()` 处理。
+ * @returns 当 `document.execCommand('copy')` 返回成功时为 `true`，否则为 `false`。
+ */
 export function $fallbackCopy(content: string) {
 	content = content?.trim() || ''
 	const textArea = document.createElement('textarea')
@@ -136,6 +199,13 @@ export function $fallbackCopy(content: string) {
 	}
 }
 
+/**
+ * 将当前页面的路径、查询参数和哈希编码成一个 URI 片段字符串。
+ *
+ * @param hash 可选的替代 hash；如果传入时没有 `#` 前缀会自动补上。
+ * @returns 编码后的 URI 组件字符串。
+ * @throws 在非浏览器环境中会抛出空字符串。
+ */
 export function web$encodeURI(hash?: string) {
 	if (typeof window === 'undefined') throw ''
 	let h = location.hash
@@ -161,6 +231,12 @@ export const $compressImageDefaultOptions: Options = {
 	// fileType: 'image/jpeg',
 }
 
+/**
+ * 将浏览器中的 `File` 对象转换为 data URL 字符串。
+ *
+ * @param file 浏览器文件对象。
+ * @returns 返回一个 Promise，成功时得到完整的 data URL 字符串。
+ */
 async function $fileToDataUrl(file: File) {
 	return new Promise<string>((resolve, reject) => {
 		const reader = new FileReader()
@@ -176,6 +252,17 @@ async function $fileToDataUrl(file: File) {
 	})
 }
 
+/**
+ * 压缩 Base64 图片并以 data URL 形式返回。
+ *
+ * 说明：
+ * - 同时支持纯 Base64 和已有 data URL 两种输入。
+ * - 如果输入无法被规范化为合法 data URL，则返回空字符串。
+ *
+ * @param base64 输入的图片数据。
+ * @param options 可选压缩配置，会覆盖默认配置。
+ * @returns 返回压缩后的 data URL；如果输入无效则返回空字符串。
+ */
 export async function $compressImageBase64(base64: string, options?: Options) {
 	const dataUrl = $toDataUrlFromBase64(base64)
 	if (!dataUrl) return ''
@@ -191,6 +278,19 @@ export async function $compressImageBase64(base64: string, options?: Options) {
 
 export async function $compressImage(file: File, options?: Options): Promise<File>
 export async function $compressImage(files: File[], options?: Options): Promise<File[]>
+
+/**
+ * 在浏览器中压缩一个或多个图片文件。
+ *
+ * 行为说明：
+ * - 会将用户传入配置与 `$compressImageDefaultOptions` 合并。
+ * - 会保留原始文件名。
+ * - 某个文件压缩失败时，会直接返回该原始文件，不会抛出中断整个批次。
+ *
+ * @param input 单个 `File` 或 `File[]`。
+ * @param options 可选压缩配置。
+ * @returns 返回 Promise；输入是单文件时得到单个 `File`，输入是数组时得到 `File[]`。
+ */
 export async function $compressImage(
 	input: File | File[],
 	options?: Options,

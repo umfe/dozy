@@ -812,6 +812,64 @@ export function $formatDate(dateInput: string | number | Date): string {
 }
 
 /**
+ * 格式化数值为字符串，先放大再保留指定小数位数。
+ *
+ * 行为说明：
+ * - 先将数值乘以 10^bits 进行放大。
+ * - 然后使用 `toFixed(bits)` 保留指定位数的小数。
+ * - 当输入不是有效数字时返回 `'-'`。
+ *
+ * @param points 要格式化的数值。
+ * @param bits 放大倍数的指数，同时也是小数位数，默认为 `2`。
+ * @returns 返回格式化后的字符串；输入无效时返回 `'-'`。
+ *
+ * @example
+ * $formatPoints(1.23, 2) // 返回 "123.00"
+ * $formatPoints(0.5, 3)  // 返回 "500.000"
+ */
+export function $formatPoints(points: number, bits = 2) {
+	if (!$sc(points)) return '-'
+	return (points * Math.pow(10, bits)).toFixed(bits)
+}
+
+/**
+ * 格式化数值为带符号和颜色的显示元组。
+ *
+ * 行为说明：
+ * - 先将数值乘以 10^bits 进行放大，然后使用 `toFixed(bits)` 格式化。
+ * - 根据数值正负自动添加符号前缀并分配对应颜色。
+ * - 正数：前缀 `'+'`，颜色 `'#0a0'`（绿色）。
+ * - 负数：前缀 `'-'`，颜色 `'#a00'`（红色）。
+ * - 零或其他：无前缀，颜色 `'#333'`（深灰色）。
+ * - 当输入不是有效数字时返回 `['+?', '#333']`。
+ *
+ * @param points 要格式化的数值。
+ * @param bits 放大倍数的指数，同时也是小数位数，默认为 `2`。
+ * @returns 返回包含显示文本和颜色的元组 `[display, color]`。
+ *
+ * @example
+ * $formatPointsWithChange(1.23, 2)  // 返回 ["+123.00", "#0a0"]
+ * $formatPointsWithChange(-0.5, 2)  // 返回 ["-50.00", "#a00"]
+ * $formatPointsWithChange(0, 2)     // 返回 ["0.00", "#333"]
+ */
+export function $formatPointsWithChange(
+	points: number,
+	bits = 2,
+): [display: string, color: string] {
+	let color = '#333'
+	if (!$sc(points)) return ['+?', color]
+	let prefix = ''
+	if (points > 0) {
+		prefix = '+'
+		color = '#0a0'
+	} else if (points < 0) {
+		prefix = '-'
+		color = '#a00'
+	}
+	return [prefix + (points * Math.pow(10, bits)).toFixed(bits), color]
+}
+
+/**
  * 将错误转换成一个始终包含 `msg` 字段的对象。
  *
  * @typeParam T 附加字段对象类型。

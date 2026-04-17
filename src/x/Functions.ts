@@ -829,7 +829,7 @@ export function $formatDate(dateInput: string | number | Date): string {
  * $formatPoints(12.34, 2)  // 返回 "1,234.00"
  * $formatPoints(0.5, 3)    // 返回 "500.000"
  */
-export function $formatPoints(points: number, bits = 2) {
+export function $formatPoints(points?: number, bits = 2) {
 	if (!$sc(points)) return '-'
 	return $formatWithCommas((points * Math.pow(10, -bits)).toFixed(bits))
 }
@@ -857,7 +857,7 @@ export function $formatPoints(points: number, bits = 2) {
  * $formatPointsWithChange(0, 2)      // 返回 ["0.00", "#333"]
  */
 export function $formatPointsWithChange(
-	points: number,
+	points?: number,
 	bits = 2,
 ): [display: string, color: string] {
 	let color = '#333'

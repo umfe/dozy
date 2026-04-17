@@ -812,31 +812,34 @@ export function $formatDate(dateInput: string | number | Date): string {
 }
 
 /**
- * 格式化数值为字符串，先放大再保留指定小数位数。
+ * 格式化数值为字符串，先放大再保留指定小数位数，并添加千分位分隔符。
  *
  * 行为说明：
  * - 先将数值乘以 10^bits 进行放大。
  * - 然后使用 `toFixed(bits)` 保留指定位数的小数。
+ * - 最后通过 `$formatWithCommas` 添加千分位逗号分隔符。
  * - 当输入不是有效数字时返回 `'-'`。
  *
  * @param points 要格式化的数值。
  * @param bits 放大倍数的指数，同时也是小数位数，默认为 `2`。
- * @returns 返回格式化后的字符串；输入无效时返回 `'-'`。
+ * @returns 返回格式化后的字符串（含千分位）；输入无效时返回 `'-'`。
  *
  * @example
- * $formatPoints(1.23, 2) // 返回 "123.00"
- * $formatPoints(0.5, 3)  // 返回 "500.000"
+ * $formatPoints(1.23, 2)   // 返回 "123.00"
+ * $formatPoints(12.34, 2)  // 返回 "1,234.00"
+ * $formatPoints(0.5, 3)    // 返回 "500.000"
  */
 export function $formatPoints(points: number, bits = 2) {
 	if (!$sc(points)) return '-'
-	return (points * Math.pow(10, bits)).toFixed(bits)
+	return $formatWithCommas((points * Math.pow(10, bits)).toFixed(bits))
 }
 
 /**
- * 格式化数值为带符号和颜色的显示元组。
+ * 格式化数值为带符号和颜色的显示元组，并添加千分位分隔符。
  *
  * 行为说明：
  * - 先将数值乘以 10^bits 进行放大，然后使用 `toFixed(bits)` 格式化。
+ * - 通过 `$formatWithCommas` 添加千分位逗号分隔符。
  * - 根据数值正负自动添加符号前缀并分配对应颜色。
  * - 正数：前缀 `'+'`，颜色 `'#0a0'`（绿色）。
  * - 负数：前缀 `'-'`，颜色 `'#a00'`（红色）。
@@ -845,12 +848,13 @@ export function $formatPoints(points: number, bits = 2) {
  *
  * @param points 要格式化的数值。
  * @param bits 放大倍数的指数，同时也是小数位数，默认为 `2`。
- * @returns 返回包含显示文本和颜色的元组 `[display, color]`。
+ * @returns 返回包含显示文本（含千分位）和颜色的元组 `[display, color]`。
  *
  * @example
- * $formatPointsWithChange(1.23, 2)  // 返回 ["+123.00", "#0a0"]
- * $formatPointsWithChange(-0.5, 2)  // 返回 ["-50.00", "#a00"]
- * $formatPointsWithChange(0, 2)     // 返回 ["0.00", "#333"]
+ * $formatPointsWithChange(1.23, 2)   // 返回 ["+123.00", "#0a0"]
+ * $formatPointsWithChange(12.34, 2)  // 返回 ["+1,234.00", "#0a0"]
+ * $formatPointsWithChange(-0.5, 2)   // 返回 ["-50.00", "#a00"]
+ * $formatPointsWithChange(0, 2)      // 返回 ["0.00", "#333"]
  */
 export function $formatPointsWithChange(
 	points: number,
@@ -866,7 +870,7 @@ export function $formatPointsWithChange(
 		prefix = '-'
 		color = '#a00'
 	}
-	return [prefix + (points * Math.pow(10, bits)).toFixed(bits), color]
+	return [prefix + $formatWithCommas((points * Math.pow(10, bits)).toFixed(bits)), color]
 }
 
 /**

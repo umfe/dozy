@@ -831,7 +831,7 @@ export function $formatDate(dateInput: string | number | Date): string {
  */
 export function $formatPoints(points: number, bits = 2) {
 	if (!$sc(points)) return '-'
-	return $formatWithCommas((points * Math.pow(10, bits)).toFixed(bits))
+	return $formatWithCommas((points * Math.pow(10, -bits)).toFixed(bits))
 }
 
 /**
@@ -870,7 +870,7 @@ export function $formatPointsWithChange(
 		prefix = '-'
 		color = '#a00'
 	}
-	return [prefix + $formatWithCommas((points * Math.pow(10, bits)).toFixed(bits)), color]
+	return [prefix + $formatWithCommas((points * Math.pow(10, -bits)).toFixed(bits)), color]
 }
 
 /**

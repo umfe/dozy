@@ -867,7 +867,6 @@ export function $formatPointsWithChange(
 		prefix = '+'
 		color = '#0a0'
 	} else if (points < 0) {
-		prefix = '-'
 		color = '#a00'
 	}
 	return [prefix + $formatWithCommas((points * Math.pow(10, -bits)).toFixed(bits)), color]

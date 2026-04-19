@@ -4,6 +4,7 @@ import { $loadOpt } from './Functions'
 
 export type DozyConfigItem = {}
 export type DozyConfig = Partial<DozyConfigItem>
+
 class Dozy {
 	/**
 	 * 将用户传入的配置合并到当前运行时配置对象中。

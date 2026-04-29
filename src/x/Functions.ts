@@ -1052,12 +1052,18 @@ export function $purifyBase64(input: string | Null): string | null {
 }
 
 /**
- * 基于“纯 base64”推断图片 mime 类型。
+ * 基于“纯 base64”推断文件 mime 类型。
  *
  * 说明：
- * - 自动支持：jpeg/png/gif/webp/bmp/tiff/avif/heic/x-icon。
+ * - 图片：jpeg/png/gif/webp/bmp/tiff/avif/heic/x-icon/svg+xml。
+ * - 音频：mpeg(mp3)/wav/ogg/flac/aac/m4a。
+ * - 视频：mp4/webm/quicktime(mov)/x-msvideo(avi)/x-matroska(mkv)。
+ * - 文档：pdf/msword(doc)/vnd.ms-excel(xls)/vnd.ms-powerpoint(ppt)/
+ *        vnd.openxmlformats-officedocument.*(docx/xlsx/pptx)。
+ * - 压缩包：zip/x-rar-compressed/x-7z-compressed/gzip/x-tar。
+ * - 其它：xml。
  * - 输入可为纯 base64 或 data URL，内部会先清洗。
- * - 无法识别时回退为 `image/png`。
+ * - 无法识别时回退为 `application/octet-stream`。
  *
  * 返回值约定：
  * - 一定返回非空 mime 字符串（不会返回 null/undefined/空串）。
@@ -1065,10 +1071,11 @@ export function $purifyBase64(input: string | Null): string | null {
 export function $inferMimeTypeFormPureBase64(pureBase64: string | Null) {
 	const normalized = $purifyBase64(pureBase64)
 	if (!normalized) {
-		return 'image/png'
+		return 'application/octet-stream'
 	}
 	const bytes = $decodeBase64ToBytes(normalized)
 
+	// === 图片 ===
 	if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
 		return 'image/jpeg'
 	}
@@ -1091,13 +1098,6 @@ export function $inferMimeTypeFormPureBase64(pureBase64: string | Null) {
 	) {
 		return 'image/gif'
 	}
-	if (
-		bytes.length >= 12 &&
-		$bytesToAscii(bytes, 0, 4) === 'RIFF' &&
-		$bytesToAscii(bytes, 8, 12) === 'WEBP'
-	) {
-		return 'image/webp'
-	}
 	if (bytes.length >= 2 && bytes[0] === 0x42 && bytes[1] === 0x4d) {
 		return 'image/bmp'
 	}
@@ -1109,23 +1109,6 @@ export function $inferMimeTypeFormPureBase64(pureBase64: string | Null) {
 		return 'image/tiff'
 	}
 	if (
-		bytes.length >= 12 &&
-		$bytesToAscii(bytes, 4, 8) === 'ftyp' &&
-		$bytesToAscii(bytes, 8, 12) === 'avif'
-	) {
-		return 'image/avif'
-	}
-	if (
-		bytes.length >= 12 &&
-		$bytesToAscii(bytes, 4, 8) === 'ftyp' &&
-		($bytesToAscii(bytes, 8, 12) === 'heic' ||
-			$bytesToAscii(bytes, 8, 12) === 'heix' ||
-			$bytesToAscii(bytes, 8, 12) === 'hevc' ||
-			$bytesToAscii(bytes, 8, 12) === 'hevx')
-	) {
-		return 'image/heic'
-	}
-	if (
 		bytes.length >= 8 &&
 		bytes[0] === 0x00 &&
 		bytes[1] === 0x00 &&
@@ -1135,7 +1118,230 @@ export function $inferMimeTypeFormPureBase64(pureBase64: string | Null) {
 		return 'image/x-icon'
 	}
 
-	return 'image/png'
+	// SVG：常见以 `<?xml` 或 `<svg` 开头
+	const head = $bytesToAscii(bytes, 0, Math.min(bytes.length, 256)).trimStart().toLowerCase()
+	if (head.startsWith('<svg') || (head.startsWith('<?xml') && head.includes('<svg'))) {
+		return 'image/svg+xml'
+	}
+
+	// === RIFF 容器（webp / wav / avi） ===
+	if (bytes.length >= 12 && $bytesToAscii(bytes, 0, 4) === 'RIFF') {
+		const sub = $bytesToAscii(bytes, 8, 12)
+		if (sub === 'WEBP') return 'image/webp'
+		if (sub === 'WAVE') return 'audio/wav'
+		if (sub === 'AVI ') return 'video/x-msvideo'
+	}
+
+	// === ISO BMFF 容器（mp4 / mov / avif / heic / m4a） ===
+	if (bytes.length >= 12 && $bytesToAscii(bytes, 4, 8) === 'ftyp') {
+		const brand = $bytesToAscii(bytes, 8, 12)
+		if (brand === 'avif' || brand === 'avis') return 'image/avif'
+		if (brand === 'heic' || brand === 'heix' || brand === 'hevc' || brand === 'hevx')
+			return 'image/heic'
+		if (brand === 'qt  ') return 'video/quicktime'
+		if (brand === 'M4A ' || brand === 'M4B ' || brand === 'M4P ') return 'audio/mp4'
+		// 其余 ftyp 品牌（mp42/isom/iso2/avc1/mmp4/dash/...）当作 mp4 视频
+		return 'video/mp4'
+	}
+
+	// === EBML（webm / mkv） ===
+	if (
+		bytes.length >= 4 &&
+		bytes[0] === 0x1a &&
+		bytes[1] === 0x45 &&
+		bytes[2] === 0xdf &&
+		bytes[3] === 0xa3
+	) {
+		// 在前 4KB 内找 DocType；webm 字符串出现则判定 webm，否则按 mkv
+		const sniffEnd = Math.min(bytes.length, 4096)
+		const sniff = $bytesToAscii(bytes, 0, sniffEnd)
+		if (sniff.includes('webm')) return 'video/webm'
+		return 'video/x-matroska'
+	}
+
+	// === 音频 ===
+	if (bytes.length >= 4 && $bytesToAscii(bytes, 0, 4) === 'OggS') {
+		return 'audio/ogg'
+	}
+	if (bytes.length >= 4 && $bytesToAscii(bytes, 0, 4) === 'fLaC') {
+		return 'audio/flac'
+	}
+	// MP3：ID3v2 头 或 帧同步 0xFF Ex/Fx
+	if (bytes.length >= 3 && $bytesToAscii(bytes, 0, 3) === 'ID3') {
+		return 'audio/mpeg'
+	}
+	if (bytes.length >= 2 && bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0) {
+		// AAC ADTS 同步字 (FF F1 / FF F9)
+		if (bytes[1] === 0xf1 || bytes[1] === 0xf9) return 'audio/aac'
+		return 'audio/mpeg'
+	}
+
+	// === 文档 ===
+	if (bytes.length >= 4 && $bytesToAscii(bytes, 0, 4) === '%PDF') {
+		return 'application/pdf'
+	}
+	// CFB（老 Office：doc/xls/ppt）
+	if (
+		bytes.length >= 8 &&
+		bytes[0] === 0xd0 &&
+		bytes[1] === 0xcf &&
+		bytes[2] === 0x11 &&
+		bytes[3] === 0xe0 &&
+		bytes[4] === 0xa1 &&
+		bytes[5] === 0xb1 &&
+		bytes[6] === 0x1a &&
+		bytes[7] === 0xe1
+	) {
+		return 'application/x-cfb'
+	}
+
+	// === 压缩包（含 OOXML：docx/xlsx/pptx 也是 zip） ===
+	if (
+		bytes.length >= 4 &&
+		bytes[0] === 0x50 &&
+		bytes[1] === 0x4b &&
+		(bytes[2] === 0x03 || bytes[2] === 0x05 || bytes[2] === 0x07) &&
+		(bytes[3] === 0x04 || bytes[3] === 0x06 || bytes[3] === 0x08)
+	) {
+		// 在前 4KB 内嗅探 OOXML 特征文件名，以区分 docx/xlsx/pptx
+		const sniffEnd = Math.min(bytes.length, 4096)
+		const sniff = $bytesToAscii(bytes, 0, sniffEnd)
+		if (sniff.includes('word/')) {
+			return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+		}
+		if (sniff.includes('xl/')) {
+			return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+		}
+		if (sniff.includes('ppt/')) {
+			return 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+		}
+		return 'application/zip'
+	}
+	if (
+		bytes.length >= 7 &&
+		bytes[0] === 0x52 &&
+		bytes[1] === 0x61 &&
+		bytes[2] === 0x72 &&
+		bytes[3] === 0x21 &&
+		bytes[4] === 0x1a &&
+		bytes[5] === 0x07
+	) {
+		return 'application/x-rar-compressed'
+	}
+	if (
+		bytes.length >= 6 &&
+		bytes[0] === 0x37 &&
+		bytes[1] === 0x7a &&
+		bytes[2] === 0xbc &&
+		bytes[3] === 0xaf &&
+		bytes[4] === 0x27 &&
+		bytes[5] === 0x1c
+	) {
+		return 'application/x-7z-compressed'
+	}
+	if (bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b) {
+		return 'application/gzip'
+	}
+	// tar：在偏移 257 处有 "ustar"
+	if (bytes.length >= 265 && $bytesToAscii(bytes, 257, 262) === 'ustar') {
+		return 'application/x-tar'
+	}
+
+	// === XML / 通用文本 ===
+	if (head.startsWith('<?xml')) {
+		return 'application/xml'
+	}
+
+	return 'application/octet-stream'
+}
+
+/**
+ * 基于“纯 base64”推断文件后缀。
+ *
+ * 说明：
+ * - 覆盖 `$inferMimeTypeFormPureBase64` 支持的全部类型。
+ * - 输入可为纯 base64 或 data URL，内部会先清洗。
+ * - 无法识别时回退为 `bin`。
+ *
+ * 返回值约定：
+ * - 一定返回非空后缀字符串（不含点号，不会返回 null/undefined/空串）。
+ */
+export function $inferExtensionFormPureBase64(pureBase64: string | Null) {
+	const mime = $inferMimeTypeFormPureBase64(pureBase64)
+	switch (mime) {
+		// 图片
+		case 'image/jpeg':
+			return 'jpg'
+		case 'image/png':
+			return 'png'
+		case 'image/gif':
+			return 'gif'
+		case 'image/webp':
+			return 'webp'
+		case 'image/bmp':
+			return 'bmp'
+		case 'image/tiff':
+			return 'tiff'
+		case 'image/avif':
+			return 'avif'
+		case 'image/heic':
+			return 'heic'
+		case 'image/x-icon':
+			return 'ico'
+		case 'image/svg+xml':
+			return 'svg'
+		// 音频
+		case 'audio/mpeg':
+			return 'mp3'
+		case 'audio/wav':
+			return 'wav'
+		case 'audio/ogg':
+			return 'ogg'
+		case 'audio/flac':
+			return 'flac'
+		case 'audio/aac':
+			return 'aac'
+		case 'audio/mp4':
+			return 'm4a'
+		// 视频
+		case 'video/mp4':
+			return 'mp4'
+		case 'video/webm':
+			return 'webm'
+		case 'video/quicktime':
+			return 'mov'
+		case 'video/x-msvideo':
+			return 'avi'
+		case 'video/x-matroska':
+			return 'mkv'
+		// 文档
+		case 'application/pdf':
+			return 'pdf'
+		case 'application/x-cfb':
+			return 'doc'
+		case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+			return 'docx'
+		case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+			return 'xlsx'
+		case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+			return 'pptx'
+		// 压缩包
+		case 'application/zip':
+			return 'zip'
+		case 'application/x-rar-compressed':
+			return 'rar'
+		case 'application/x-7z-compressed':
+			return '7z'
+		case 'application/gzip':
+			return 'gz'
+		case 'application/x-tar':
+			return 'tar'
+		// 其它
+		case 'application/xml':
+			return 'xml'
+		default:
+			return 'bin'
+	}
 }
 
 /**

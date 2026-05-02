@@ -20,7 +20,7 @@ type q = any
  * - 支持自动处理 Base64 编码/解码（GitHub API 要求文件内容使用 Base64 编码）
  * - 内置冲突重试机制（HTTP 409 冲突时自动重试）
  * - 提供原始模式和文本模式的切换（raw 参数）
- * - 可通过重写 `_prind` 和 `path` 方法实现自定义处理（如加密、路径映射等）
+ * - 可通过重写 `_process` 和 `path` 方法实现自定义处理（如加密、路径映射等）
  *
  * @example
  * ```typescript
@@ -81,13 +81,13 @@ export class RepoStore {
 	 * @example
 	 * ```typescript
 	 * class EncryptedRepoStore extends RepoStore {
-	 *   _prind(content: string, en: boolean) {
+	 *   _process(content: string, en: boolean) {
 	 *     return en ? encrypt(content) : decrypt(content)
 	 *   }
 	 * }
 	 * ```
 	 */
-	_prind(content: string, en: boolean) {
+	_process(content: string, en: boolean) {
 		return content
 	}
 
@@ -164,7 +164,7 @@ export class RepoStore {
 	 *   - `true`：返回 GitHub API 响应的原始 Base64 编码内容
 	 * @returns
 	 *   - 当 `raw=true`：返回 Base64 编码的字符串
-	 *   - 当 `raw=false` 且内容是文本：返回解码后的 Unicode 字符串（会经过 `_prind` 处理）
+	 *   - 当 `raw=false` 且内容是文本：返回解码后的 Unicode 字符串（会经过 `_process` 处理）
 	 *   - 当 `raw=false` 且内容是二进制：返回 `ArrayBuffer`
 	 *   - 当 `data.content` 为空时：返回完整的 API 响应数据（可能是目录列表或文件元数据）
 	 *
@@ -174,7 +174,7 @@ export class RepoStore {
 	 * - 文本内容会尝试使用 `$decodeBase64ToUnicode` 解码，失败则使用 `$decodeBase64ToBinary` 解码
 	 * - 返回目录列表时，`data.content` 为空，此时返回原始响应数据
 	 * - 会自动应用 `path()` 方法处理路径
-	 * - 解码后的文本会经过 `_prind(content, false)` 处理
+	 * - 解码后的文本会经过 `_process(content, false)` 处理
 	 *
 	 * @see https://docs.github.com/en/rest/repos/contents
 	 *
@@ -205,7 +205,7 @@ export class RepoStore {
 		if (!$s(data.content)) return data
 		try {
 			let t = $decodeBase64ToUnicode(data.content)
-			return this._prind(t, false)
+			return this._process(t, false)
 		} catch (e) {}
 		return $decodeBase64ToBinary(data.content)
 	}
@@ -239,7 +239,7 @@ export class RepoStore {
 	 * @param path - 文件路径（相对于仓库根目录）
 	 * @param content - 要存储的内容（字符串）
 	 * @param raw - 原始模式标志
-	 *   - `false`（默认）：将内容视为文本，经过 `_prind` 处理后 Base64 编码再存储
+	 *   - `false`（默认）：将内容视为文本，经过 `_process` 处理后 Base64 编码再存储
 	 *   - `true`：假定 content 已经是 Base64 编码，直接存储（跳过编码步骤）
 	 * @returns 无返回值
 	 *
@@ -248,7 +248,7 @@ export class RepoStore {
 	 * @remarks
 	 * - **冲突处理**：当遇到 HTTP 409（冲突）错误时，会自动重试一次（递归调用自身）
 	 * - **SHA 处理**：如果文件已存在，会自动获取其 SHA 值用于 API 调用（GitHub API 要求提供 SHA 以更新文件）
-	 * - **编码流程**：非 raw 模式下，内容会先经过 `_prind(content, true)` 处理，然后 Base64 编码
+	 * - **编码流程**：非 raw 模式下，内容会先经过 `_process(content, true)` 处理，然后 Base64 编码
 	 * - **空文件检测**：使用 `det()` 方法检查文件是否存在，不存在时 sha 为 undefined（创建新文件）
 	 * - 会自动应用 `path()` 方法处理路径
 	 *
@@ -282,7 +282,7 @@ export class RepoStore {
 					})
 				).data).sha
 			if (!raw) {
-				content = this._prind(content, true)
+				content = this._process(content, true)
 				content = $encodeUnicodeToBase64(content)
 			}
 			await this.ware.request('PUT /repos/{owner}/{repo}/contents/{path}', {
@@ -370,7 +370,7 @@ export class RepoStore {
 	 *
 	 * @remarks
 	 * - 仅在 HTTP 状态码为 404 时静默失败，其他错误会正常抛出
-	 * - 内部调用 `getJson` 方法，因此会经过 Base64 解码和 `_prind` 处理
+	 * - 内部调用 `getJson` 方法，因此会经过 Base64 解码和 `_process` 处理
 	 *
 	 * @example
 	 * ```typescript
@@ -402,7 +402,7 @@ export class RepoStore {
 	 * @throws {Error} 当文件不存在、读取失败或 JSON 解析失败时抛出异常
 	 *
 	 * @remarks
-	 * - 内部调用 `get()` 方法获取内容，因此会经过 Base64 解码和 `_prind` 处理
+	 * - 内部调用 `get()` 方法获取内容，因此会经过 Base64 解码和 `_process` 处理
 	 * - 使用 `$jsonParse` 进行解析（可能包含自定义的 JSON 解析逻辑，如日期恢复等）
 	 * - 如果文件内容不是有效的 JSON，会抛出异常
 	 *

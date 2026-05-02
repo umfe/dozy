@@ -3,7 +3,8 @@ import { $genSSF, $lplus, $s, xtrim } from '../../x/Functions'
 import { __GensDirectives } from './GensDirectives.js'
 import { __GensStyleIds } from './GensStyleIds.js'
 
-export function $escapeHTML(str: string) {
+export function $escapeHTML(str?: string) {
+	if (!str) return ''
 	return str.replace(/[&<>"']/g, (match) => {
 		const escapeMap = <any>{
 			'&': '&amp;',

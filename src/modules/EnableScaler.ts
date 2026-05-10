@@ -12,7 +12,7 @@ export type ScaleIniter = (scaler: Scaler) => void
 class Scaler {
 	heightElement!: HTMLElement
 	widthElement!: HTMLElement
-	offsetHorizontal = 0.01
+	offsetHorizontal = 8
 	#base = 320
 	set base(val: number) {
 		if ($sc(val)) this.#base = val
@@ -27,7 +27,7 @@ class Scaler {
 		if (typeof window === 'undefined') return
 		this.innerContainer.style.transform =
 			'translateX(-50%) scale(' +
-			(this.mainScale + this.offsetHorizontal) +
+			(this.mainScale + this.offsetHorizontal / this.base) +
 			', ' +
 			this.mainScale +
 			')'
@@ -151,7 +151,7 @@ export function enableScaler(
  * @param args.setFullScreenWidth 可选回调，用于接收计算后的可用宽度。
  * @param args.setFullContentHeight 可选回调，用于接收缩放后的虚拟内容高度。
  * @param args.setMainScale 可选回调，在主缩放值变化时触发。
- * @param args.offsetHorizontal 可选的水平补偿值。
+ * @param args.offsetHorizontal 可选的水平像素补偿值，默认额外溢出 `8px`（左右各 `4px`）。
  * @param args.heightElement 可选高度测量元素，默认使用 `document.documentElement`。
  * @param args.widthElement 可选宽度测量元素，默认使用 `document.documentElement`。
  * @param args.base 可选基础内容宽度。

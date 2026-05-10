@@ -9,10 +9,28 @@ import { $s, $sc, l } from '..'
 */
 export type ScaleComputer = undefined | ((scaler: Scaler) => number)
 export type ScaleIniter = (scaler: Scaler) => void
+export type ScaleResponsiveOptions = {
+	/**
+	 * xls 横屏模式下的 base 乘数。
+	 *
+	 * 默认写成 `960 / 320`，方便直观看出是从 320 基准扩展到 960 基准。
+	 */
+	baseMultiplier?: number
+	/**
+	 * xls 横屏模式下的最大宽高比。
+	 *
+	 * 默认写成 `1 / 0.64`，表示把原先 0.64 的竖屏限制反过来用于横屏。
+	 */
+	xlsMaxAspectRatio?: number
+	/** xls 状态变化时触发，方便业务侧保存状态。 */
+	setXls?: (b: boolean) => void
+}
 class Scaler {
 	heightElement!: HTMLElement
 	widthElement!: HTMLElement
 	offsetHorizontal = 8
+	/** 未进入 xls 响应式扩展前的基础内容宽度，setBase 会更新这个值。 */
+	sourceBase = 320
 	#base = 320
 	set base(val: number) {
 		if ($sc(val)) this.#base = val
@@ -104,6 +122,7 @@ export function enableScaler(
 	}
 	const thr = l.throttle(resizer)
 	const setBase = (val: number) => {
+		scaler.sourceBase = val
 		scaler.base = val
 		inner.width = scaler.base + 'px'
 		thr()
@@ -155,6 +174,7 @@ export function enableScaler(
  * @param args.heightElement 可选高度测量元素，默认使用 `document.documentElement`。
  * @param args.widthElement 可选宽度测量元素，默认使用 `document.documentElement`。
  * @param args.base 可选基础内容宽度。
+ * @param args.responsive 传入后启用 xls 横屏响应式：宽大于高时切换 base 与 maxAspectRatio，并同步 `html[data-xad-xls]`。
  * @returns 返回一个可供 `enableScaler` 使用的 `ScaleIniter` 函数。
  */
 export const standardIniter: (args: {
@@ -166,6 +186,7 @@ export const standardIniter: (args: {
 	heightElement?: HTMLElement
 	widthElement?: HTMLElement
 	base?: number
+	responsive?: ScaleResponsiveOptions
 }) => ScaleIniter =
 	({
 		maxAspectRatio = Infinity,
@@ -176,12 +197,15 @@ export const standardIniter: (args: {
 		heightElement,
 		base,
 		offsetHorizontal,
+		responsive,
 	}) =>
 	(scaler) => {
 		scaler.widthElement = widthElement || document.documentElement
 		scaler.heightElement = heightElement || document.documentElement
 		scaler.onMainScaleChange = setMainScale
-		scaler.base = base as number
+		const originBase = ($sc(base) ? base : scaler.base) as number
+		scaler.sourceBase = originBase
+		scaler.base = originBase
 		if ($sc(offsetHorizontal)) scaler.offsetHorizontal = offsetHorizontal
 		scaler.scaleComputer = (scaler) => {
 			if (typeof window === 'undefined') return 1
@@ -189,7 +213,19 @@ export const standardIniter: (args: {
 			const helement = scaler.heightElement
 			const w = welement.clientWidth
 			const h = helement.clientHeight
-			const fullScreenWidth = Math.min(w, h * maxAspectRatio)
+			const xls = !!responsive && w > h
+			const finalBase = xls
+				? scaler.sourceBase * (responsive.baseMultiplier ?? 960 / 320)
+				: scaler.sourceBase
+			const finalMaxAspectRatio = xls
+				? (responsive.xlsMaxAspectRatio ?? 1 / 0.64)
+				: maxAspectRatio
+			// xls 状态交给 html 属性驱动 Tailwind 自定义变体，比如 xls:grid-cols-5。
+			document.documentElement.dataset.xadXls = xls ? '1' : '0'
+			responsive?.setXls?.(xls)
+			scaler.base = finalBase
+			scaler.innerContainer.style.width = scaler.base + 'px'
+			const fullScreenWidth = Math.min(w, h * finalMaxAspectRatio)
 			const fscl = fullScreenWidth / scaler.base
 			setFullScreenWidth?.(fullScreenWidth) // setFullScreenWidth 此引用不会过期
 			setFullContentHeight?.(h / fscl)

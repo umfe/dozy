@@ -13,13 +13,13 @@ export type ScaleResponsiveOptions = {
 	/**
 	 * xls 横屏模式下的 base 乘数。
 	 *
-	 * 默认写成 `960 / 320`，方便直观看出是从 320 基准扩展到 960 基准。
+	 * 默认写成 `640 / 320`，方便直观看出是从 320 基准扩展到 640 基准。
 	 */
 	baseMultiplier?: number
 	/**
 	 * xls 横屏模式下的最大宽高比。
 	 *
-	 * 默认写成 `1 / 0.64`，表示把原先 0.64 的竖屏限制反过来用于横屏。
+	 * 默认写成 `1.2`。
 	 */
 	xlsMaxAspectRatio?: number
 	/** xls 状态变化时触发，方便业务侧保存状态。 */
@@ -215,11 +215,9 @@ export const standardIniter: (args: {
 			const h = helement.clientHeight
 			const xls = !!responsive && w > h
 			const finalBase = xls
-				? scaler.sourceBase * (responsive.baseMultiplier ?? 960 / 320)
+				? scaler.sourceBase * (responsive.baseMultiplier ?? 640 / 320)
 				: scaler.sourceBase
-			const finalMaxAspectRatio = xls
-				? (responsive.xlsMaxAspectRatio ?? 1 / 0.64)
-				: maxAspectRatio
+			const finalMaxAspectRatio = xls ? (responsive.xlsMaxAspectRatio ?? 1.2) : maxAspectRatio
 			// xls 状态交给 html 属性驱动 Tailwind 自定义变体，比如 xls:grid-cols-5。
 			document.documentElement.dataset.xadXls = xls ? '1' : '0'
 			responsive?.setXls?.(xls)

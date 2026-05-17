@@ -249,6 +249,21 @@ export function $isValidOrBriefURL(url?: string) {
 }
 
 /**
+ * 补全 URL: 如果缺少协议头 (http:// 或 https://) 则自动补上 https://。
+ * 适用于用户输入的简写 URL, 例如 `a.ac` → `https://a.ac`。
+ *
+ * @param url 待补全的 URL 字符串。
+ * @returns 补全后的 URL；空字符串原样返回。
+ */
+export function $ensureUrl(url: string): string {
+	if (!url) return url
+	if (!/^https?:\/\//i.test(url)) {
+		return 'https://' + url
+	}
+	return url
+}
+
+/**
  * 将 tick 时间格式化为可读字符串。
  *
  * @param stampTicks 时间值，默认规则下 40 tick = 1 秒。

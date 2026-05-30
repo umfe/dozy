@@ -152,7 +152,9 @@ body {
 	white-space: normal;
 
 	/* 全局过渡动画 */
-	transition: all 0.4s linear;
+	transition:
+		all 0.4s linear,
+		color 0s;
 }
 
 /* 选中态样式 */

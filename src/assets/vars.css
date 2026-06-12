@@ -71,9 +71,9 @@
 	--xai-notable: #f4a261; /* 显眼色：温暖的棕橙色，配合护眼背景 */
 	--xai-border: #f0e8dd; /* 边框：淡米灰色 */
 	--xai-shadow: #8f826d; /* 阴影：比边框稍深的米灰色，保持柔和 */
+	--xai-shadow: #b8860b; /* 阴影：比边框稍深的米灰色，保持柔和 */
 	--xai-destructive: #d9534f; /* 危险操作：暖红色，与暖黄主题协调 */
 }
-
 .dark,
 .cl-dark {
 	/* 使用cl-dark切换主题 如果你想避免shadcn里dark的样式 (dark:xxx) */
@@ -85,10 +85,9 @@
 	--xai-text-muted: #94a3b8; /* 次要文本：Slate-400 */
 	--xai-notable: #8b5cf6; /* 显眼色：Violet-500，高贵的深紫色，优雅且有压迫感 */
 	--xai-border: #475569; /* 边框：Slate-600 */
-	--xai-shadow: #000000;
+	--xai-shadow: #67e8f9;
 	--xai-destructive: #f43f5e; /* Rose-500 */
 }
-
 .light,
 .cl-light {
 	/* Light: 纯白亮色 - 极致干净，高调 */
@@ -100,6 +99,6 @@
 	--xai-notable: #38bdf8; /* 显眼色：明亮的淡蓝/青色，清新通透 */
 	--xai-border: #cbd5e1; /* 边框 */
 	/* 额外说的一下 有一个地方 是--xai-notable作为背景 --xai-primary-light作为文本前景 */
-	--xai-shadow: #000000;
+	--xai-shadow: #f9a8d4;
 	--xai-destructive: #ef4444;
 }

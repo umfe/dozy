@@ -129,24 +129,17 @@ export function enableScaler(
 	}
 	window.addEventListener('resize', thr)
 	resizer()
-	// Fix: DevTools open on refresh may report stale clientWidth;
-	// double-rAF ensures re-measure after full composite.
+	// Fix: DevTools open on refresh or late mount may report stale clientWidth.
+	// Use rAF + setTimeout fallback to guarantee re-measure after layout settles.
 	requestAnimationFrame(() => requestAnimationFrame(resizer))
-	// const observer = new MutationObserver(() => {
-	// 	const style = document.documentElement.style
-	// 	scaler.mainScale = Number(style.getPropertyValue('--main-scale')) || 1
-	// })
-	// observer.observe(document.documentElement, {
-	// 	attributes: true,
-	// 	attributeFilter: ['style'],
-	// })
+	const initTimer = setTimeout(resizer, 150)
 	const ro = new ResizeObserver((entries) => {
 		for (const entry of entries) {
 			if (entry.target === innerContainer) {
 				outerContainer.style.height = `${entry.contentRect.height * scaler.mainScale}px`
 			}
 			if (entry.target === scaler.heightElement || entry.target === scaler.widthElement) {
-				thr()
+				resizer()
 			}
 		}
 	})
@@ -156,6 +149,7 @@ export function enableScaler(
 	return {
 		resizer,
 		clean: () => {
+			clearTimeout(initTimer)
 			window.removeEventListener('resize', thr)
 			ro.disconnect()
 		},

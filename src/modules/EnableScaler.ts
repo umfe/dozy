@@ -129,6 +129,9 @@ export function enableScaler(
 	}
 	window.addEventListener('resize', thr)
 	resizer()
+	// Fix: DevTools open on refresh may report stale clientWidth;
+	// double-rAF ensures re-measure after full composite.
+	requestAnimationFrame(() => requestAnimationFrame(resizer))
 	// const observer = new MutationObserver(() => {
 	// 	const style = document.documentElement.style
 	// 	scaler.mainScale = Number(style.getPropertyValue('--main-scale')) || 1

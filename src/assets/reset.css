@@ -147,9 +147,8 @@ body {
 
 	/* 换行行为 */
 	word-wrap: break-word;
-	word-break: break-all;
+	word-break: break-word;
 	overflow-wrap: break-word;
-	white-space: normal;
 
 	/* 全局过渡动画 */
 	transition:

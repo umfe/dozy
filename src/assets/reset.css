@@ -1,4 +1,4 @@
-/* 要显示滚动条需要加 scrollbar 类样式 */
+/* 要隐藏滚动条需要加 no-scrollbar 类样式 */
 /* =========================================
    CSS Reset and Global Styles
    Project: xaidozy
@@ -171,32 +171,30 @@ body {
 
 /* WebKit 浏览器 (Chrome / Edge / Safari) */
 ::-webkit-scrollbar {
-	width: 0px; /* 隐藏垂直滚动条 */
-	height: 0px; /* 隐藏水平滚动条 */
-}
-::-webkit-scrollbar-track,
-::-webkit-scrollbar-thumb {
-	background: transparent; /* 轨道和滑块透明 */
-}
-* {
-	scrollbar-width: none; /* Firefox 隐藏滚动条 */
-}
-/* @media (pointer: coarse) and (hover: none) { */
-.scrollbar::-webkit-scrollbar {
 	width: 8px; /* 垂直滚动条宽度 */
 	height: 8px; /* 水平滚动条高度 */
 }
-.scrollbar::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
 	background: #888; /* 轨道背景 */
 }
-.scrollbar::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
 	background-color: #ccc; /* 滑块颜色 */
 	border-radius: 9999px; /* 大圆角 */
 	border: 2px solid transparent; /*以此模拟内边距效果 */
 	background-clip: padding-box;
 }
-.scrollbar::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
 	background-color: #fff; /* 悬停颜色 */
+}
+
+/* 隐藏滚动条 */
+.no-scrollbar::-webkit-scrollbar {
+	width: 0px;
+	height: 0px;
+}
+.no-scrollbar::-webkit-scrollbar-track,
+.no-scrollbar::-webkit-scrollbar-thumb {
+	background: transparent;
 }
 
 .truncate {
@@ -228,11 +226,13 @@ body {
 }
 
 /* Firefox 浏览器 */
-.scrollbar {
+* {
 	scrollbar-width: thin; /* 细滚动条 */
 	scrollbar-color: #ccc #888; /* 滑块颜色 轨道背景 */
 }
-/* } */
+.no-scrollbar {
+	scrollbar-width: none; /* Firefox 隐藏滚动条 */
+}
 
 /* =======================
    5. 排版与文本 (Typography)
@@ -474,6 +474,8 @@ progress {
 }
 
 /* Webkit 表单控件特定修饰清除 
+@media (pointer: coarse) and (hover: none) {}
+.scrollbar::-webkit-s
 */
 
 /* 移除 macOS Chrome/Safari 的搜索框装饰 */

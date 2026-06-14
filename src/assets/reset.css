@@ -175,16 +175,16 @@ body {
 	height: 8px; /* 水平滚动条高度 */
 }
 ::-webkit-scrollbar-track {
-	background: rgb(136 136 136 / 0.4); /* 轨道背景 */
+	background: rgb(0 0 0 / 0.2); /* 轨道背景 */
 }
 ::-webkit-scrollbar-thumb {
-	background-color: rgb(204 204 204 / 0.8); /* 滑块颜色 */
+	background-color: #f55; /* 滑块颜色 */
 	border-radius: 9999px; /* 大圆角 */
 	border: 2px solid transparent; /*以此模拟内边距效果 */
 	background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background-color: rgb(255 255 255 / 0.8); /* 悬停颜色 */
+	background-color: #f55; /* 悬停颜色 */
 }
 
 /* 隐藏滚动条 */
@@ -228,7 +228,7 @@ body {
 /* Firefox 浏览器 */
 * {
 	scrollbar-width: thin; /* 细滚动条 */
-	scrollbar-color: rgb(204 204 204 / 0.8) rgb(136 136 136 / 0.4); /* 滑块颜色 轨道背景 */
+	scrollbar-color: #f55 rgb(0 0 0 / 0.2); /* 滑块颜色 轨道背景 */
 }
 .no-scrollbar {
 	scrollbar-width: none; /* Firefox 隐藏滚动条 */

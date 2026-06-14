@@ -1,6 +1,6 @@
 {
 	"name": "dozy",
-	"version": "1.0.93",
+	"version": "1.0.94",
 	"description": "My shared typescript utilities.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",

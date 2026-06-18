@@ -887,6 +887,68 @@ export function $formatPointsWithChange(
 	return [prefix + $formatWithCommas((points * Math.pow(10, -bits)).toFixed(bits)), color]
 }
 
+const BYTE_UNITS = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB']
+
+/**
+ * 字节数语义化显示，格式与 npm `pretty-bytes` 库一致（1000 进制）。
+ *
+ * 行为说明：
+ * - 0 / NaN / undefined 返回 `'0 B'`。
+ * - 负数与官方一致：记录符号 → 取绝对值计算 → 前缀拼回 `'-'`。
+ * - 保留 3 位有效数字，单位前后有空格。
+ *
+ * @param n 字节数。
+ * @returns 返回语义化字符串。
+ *
+ * @example
+ * $humanizeBytes(0)           // 返回 "0 B"
+ * $humanizeBytes(1234)        // 返回 "1.23 kB"
+ * $humanizeBytes(12345678)    // 返回 "12.3 MB"
+ * $humanizeBytes(1500000000)  // 返回 "1.5 GB"
+ * $humanizeBytes(-1234)       // 返回 "-1.23 kB"
+ */
+export function $humanizeBytes(n?: number): string {
+	if (!n) return '0 B'
+	const sign = n < 0 ? '-' : ''
+	const abs = Math.abs(n)
+	let i = Math.floor(Math.log(abs) / Math.log(1000))
+	if (i >= BYTE_UNITS.length) i = BYTE_UNITS.length - 1
+	const v = abs / Math.pow(1000, i)
+	const num = v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(1) : v.toFixed(2)
+	return `${sign}${num} ${BYTE_UNITS[i]}`
+}
+
+/**
+ * 以 k 为单位、保留 1 位小数；整数部分每 3 位加英文逗号。
+ *
+ * 行为说明：
+ * - NaN / undefined 当作 0 处理。
+ * - 负数：记录符号 → 取绝对值计算 → 前缀拼回 `'-'`。
+ * - 小数四舍五入到 1 位，进位到 10 时整数部分 +1、小数归零。
+ *
+ * @param n 待格式化的整数。
+ * @returns 返回语义化字符串。
+ *
+ * @example
+ * $formatK(0)        // 返回 "0.0k"
+ * $formatK(999)      // 返回 "1.0k"
+ * $formatK(12345)    // 返回 "12.3k"
+ * $formatK(1234567)  // 返回 "1,234.6k"
+ * $formatK(-12345)   // 返回 "-12.3k"
+ */
+export function $formatK(n?: number): string {
+	const x = n ?? 0
+	const sign = x < 0 ? '-' : ''
+	const k = Math.abs(x) / 1000
+	let intPart = Math.floor(k)
+	let deci = Math.round((k - intPart) * 10)
+	if (deci === 10) {
+		intPart += 1
+		deci = 0
+	}
+	return `${sign}${$formatWithCommas(intPart)}.${deci}k`
+}
+
 /**
  * 将错误转换成一个始终包含 `msg` 字段的对象。
  *

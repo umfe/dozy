@@ -101,6 +101,7 @@ html {
 
 	font-feature-settings: normal;
 	font-variation-settings: normal;
+	font-variant-numeric: tabular-nums; /* 数字等宽: 多行数字对齐, 数值刷新不抖动 */
 	-webkit-tap-highlight-color: transparent; /* 4 */
 }
 

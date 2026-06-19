@@ -930,11 +930,11 @@ export function $humanizeBytes(n?: number): string {
  * @returns 返回语义化字符串。
  *
  * @example
- * $formatK(0)        // 返回 "0.0k"
- * $formatK(999)      // 返回 "1.0k"
- * $formatK(12345)    // 返回 "12.3k"
- * $formatK(1234567)  // 返回 "1,234.6k"
- * $formatK(-12345)   // 返回 "-12.3k"
+ * $formatK(0)        // 返回 "0.0 k"
+ * $formatK(999)      // 返回 "1.0 k"
+ * $formatK(12345)    // 返回 "12.3 k"
+ * $formatK(1234567)  // 返回 "1,234.6 k"
+ * $formatK(-12345)   // 返回 "-12.3 k"
  */
 export function $formatK(n?: number): string {
 	const x = n ?? 0
@@ -946,7 +946,7 @@ export function $formatK(n?: number): string {
 		intPart += 1
 		deci = 0
 	}
-	return `${sign}${$formatWithCommas(intPart)}.${deci}k`
+	return `${sign}${$formatWithCommas(intPart)}.${deci} k`
 }
 
 /**

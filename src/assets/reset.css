@@ -103,6 +103,11 @@ html {
 	font-variation-settings: normal;
 	font-variant-numeric: tabular-nums; /* 数字等宽: 多行数字对齐, 数值刷新不抖动 */
 	-webkit-tap-highlight-color: transparent; /* 4 */
+
+	/* 换行行为 */
+	word-wrap: break-word;
+	word-break: break-word;
+	overflow-wrap: break-word;
 }
 
 /* Body 基础设置 */
@@ -144,11 +149,6 @@ body {
 
 	/* 排版行为 */
 	vertical-align: baseline;
-
-	/* 换行行为 */
-	word-wrap: break-word;
-	word-break: break-word;
-	overflow-wrap: break-word;
 
 	/* 全局过渡动画 */
 	transition:
@@ -208,6 +208,7 @@ body {
 	overflow: hidden;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
+	line-clamp: 1;
 	-webkit-line-clamp: 1;
 }
 
@@ -215,6 +216,7 @@ body {
 	overflow: hidden;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
+	line-clamp: 2;
 	-webkit-line-clamp: 2;
 }
 

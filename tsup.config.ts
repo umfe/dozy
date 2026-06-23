@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ['src/*.ts', '!src/*.d.ts'], // Auto-discover .ts files, exclude .d.ts
   format: ['esm'],
   dts: true,
-  minify: true,
+  minify: false,
   sourcemap: true,
   clean: true,
   noExternal: [/(.*)/],

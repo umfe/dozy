@@ -2,6 +2,7 @@
 	"name": "dozy",
 	"version": "1.0.99",
 	"description": "My shared typescript utilities.",
+	"sideEffects": false,
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"type": "module",

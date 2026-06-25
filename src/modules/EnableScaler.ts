@@ -7,6 +7,10 @@ import { $s, $sc, l } from '..'
 	</div>
 </div>
 */
+
+/** xls 横屏模式下的默认最大宽高比。 */
+export const DEFAULT_XLS_MAX_ASPECT_RATIO = 1.2
+
 export type ScaleComputer = undefined | ((scaler: Scaler) => number)
 export type ScaleIniter = (scaler: Scaler) => void
 export type ScaleResponsiveOptions = {
@@ -19,7 +23,7 @@ export type ScaleResponsiveOptions = {
 	/**
 	 * xls 横屏模式下的最大宽高比。
 	 *
-	 * 默认写成 `1.2`。
+	 * 默认 {@link DEFAULT_XLS_MAX_ASPECT_RATIO}。
 	 */
 	xlsMaxAspectRatio?: number
 	/** xls 状态变化时触发，方便业务侧保存状态。 */
@@ -214,7 +218,9 @@ export const standardIniter: (args: {
 			const finalBase = xls
 				? scaler.sourceBase * (responsive.baseMultiplier ?? 640 / 320)
 				: scaler.sourceBase
-			const finalMaxAspectRatio = xls ? (responsive.xlsMaxAspectRatio ?? 1.2) : maxAspectRatio
+			const finalMaxAspectRatio = xls
+				? (responsive.xlsMaxAspectRatio ?? DEFAULT_XLS_MAX_ASPECT_RATIO)
+				: maxAspectRatio
 			// xls 状态交给 html 属性驱动 Tailwind 自定义变体，比如 xls:grid-cols-5。
 			document.documentElement.dataset.xadXls = xls ? '1' : '0'
 			responsive?.setXls?.(xls)

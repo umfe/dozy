@@ -200,6 +200,17 @@ export function $fallbackCopy(content: string) {
 }
 
 /**
+ * 替换当前地址栏的 hash 部分，保留 pathname 和 search 不变。
+ *
+ * @param hash 目标 hash 值；传入时不需要带 `#` 前缀（会自动补上）。传空字符串则清除 hash。
+ */
+export function web$replaceHash(hash: string) {
+	if (typeof window === 'undefined') return
+	const h = hash ? (hash.startsWith('#') ? hash : '#' + hash) : ''
+	window.history.replaceState(null, '', window.location.pathname + window.location.search + h)
+}
+
+/**
  * 将当前页面的路径、查询参数和哈希编码成一个 URI 片段字符串。
  *
  * @param hash 可选的替代 hash；如果传入时没有 `#` 前缀会自动补上。

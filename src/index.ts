@@ -10,19 +10,11 @@ export * from './modules/gens/Gens'
 export * from './modules/gens/GensDirectives'
 export * from './modules/Color'
 
-export * from 'browser-image-compression'
-export { default as imageCompression } from 'browser-image-compression'
-
-export * from 'axios'
-export { default as axios } from 'axios'
-
-import * as l from 'lodash-es'
-export { l }
-
-export { default as Cryptojs } from 'crypto-js'
-// import('crypto-js').then((mod) => {
-// 	console.log('Loaded crypto-js AES module:', mod.default.AES)
-// })
+// 第三方重库已拆到独立子入口，避免命名冲突并让 tree-shake / code-splitting 更干净：
+//   lodash-es                -> 'dozy/lodash'  (含 l 命名空间)
+//   axios                    -> 'dozy/axios'
+//   crypto-js                -> 'dozy/crypto'
+//   browser-image-compression-> 'dozy/image'
 
 export { nanoid, customAlphabet, urlAlphabet } from 'nanoid'
 

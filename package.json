@@ -15,6 +15,22 @@
 			"types": "./dist/zod.d.ts",
 			"import": "./dist/zod.js"
 		},
+		"./lodash": {
+			"types": "./dist/lodash.d.ts",
+			"import": "./dist/lodash.js"
+		},
+		"./axios": {
+			"types": "./dist/axios.d.ts",
+			"import": "./dist/axios.js"
+		},
+		"./crypto": {
+			"types": "./dist/crypto.d.ts",
+			"import": "./dist/crypto.js"
+		},
+		"./image": {
+			"types": "./dist/image.d.ts",
+			"import": "./dist/image.js"
+		},
 		"./package.json": "./package.json",
 		"./reset": {
 			"types": "./dist/assets/reset.d.ts",

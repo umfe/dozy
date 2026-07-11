@@ -1,4 +1,5 @@
-import { $s, $sc, l } from '..'
+import { $s, $sc } from '..'
+import { l } from '../lodash'
 
 /*
 <div ref={outerContainer current}>

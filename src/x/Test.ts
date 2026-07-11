@@ -1,3 +1,3 @@
-import { imageCompression } from '..'
+import { imageCompression } from '../image'
 
 // wtf?

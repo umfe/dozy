@@ -18,4 +18,4 @@ export * from './modules/Color'
 
 export { nanoid, customAlphabet, urlAlphabet } from 'nanoid'
 
-export const DOZY = '1.0.103'
+export const DOZY = '1.0.104'

@@ -49,7 +49,7 @@
 	"scripts": {
 		"clean": "tsup --clean",
 		"build": "tsup && node scripts/copy-assets.js",
-		"prepare": "npm run build"
+		"prepublishOnly": "npm run build"
 	},
 	"author": "xaidozy",
 	"license": "ISC",

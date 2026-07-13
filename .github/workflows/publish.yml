@@ -32,25 +32,22 @@ jobs:
               run: |
                   node scripts/bump-version.js
                   npm install --package-lock-only --ignore-scripts
-                  VERSION=$(npm pkg get version | tr -d '"')
-                  echo "NEW_VERSION=$VERSION" >> $GITHUB_ENV
 
-            - name: Build
-              run: npm run build
-
+            # 不再显式 build：npm publish 会自动触发 package.json 里的 prepublishOnly 钩子完成构建
             - name: Publish to NPM
               run: |
                   if [ -z "$NODE_AUTH_TOKEN" ]; then
                     echo "::error::NODE_AUTH_TOKEN is empty. Please check that you have added NPM_TOKEN to your GitHub repository secrets."
                     exit 1
                   fi
-                  npm publish
+                  npm publish --access public
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             - name: Commit and Push Version Bump
               uses: stefanzweifel/git-auto-commit-action@v5
               with:
-                  commit_message: 'chore: bump version to ${{ env.NEW_VERSION }} [skip ci]'
-                  branch: ${{ github.ref }}
+                  commit_message: 'chore: release v${{ steps.bump.outputs.version }} [skip ci]'
+                  branch: ${{ github.ref_name }}
                   file_pattern: 'package.json src/index.ts package-lock.json'
+                  # tagging_message: 'v${{ steps.bump.outputs.version }}'

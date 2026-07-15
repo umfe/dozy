@@ -9,17 +9,19 @@
    ======================= */
 @font-face {
 	font-family: 'xaiforfont';
-	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/fonts/xaiforfont.woff2') format('woff2');
+	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/assets/fonts/xaiforfont.woff2')
+		format('woff2');
 	font-display: swap;
 }
 @font-face {
 	font-family: 'xaiforcode';
-	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/fonts/xaiforcode.woff2') format('woff2');
+	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/assets/fonts/xaiforcode.woff2')
+		format('woff2');
 	font-display: swap;
 }
 @font-face {
 	font-family: 'xaifont';
-	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/fonts/xaifont.woff2') format('woff2');
+	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/assets/fonts/xaifont.woff2') format('woff2');
 	font-display: swap;
 }
 
@@ -29,7 +31,7 @@
 		url('your-font-file-path.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
-} 
+}
 */
 
 /* =======================
@@ -76,7 +78,7 @@
 	--xaifont: xaifont;
 }
 
-/* HTML 基础设置 
+/* HTML 基础设置
    1. 统一行高
    2. iOS 字体大小调整修正
    3. 设置更易读的 Tab 宽度
@@ -379,7 +381,7 @@ img {
 	display: inline-block;
 }
 
-/* 媒体元素块级化与响应式 
+/* 媒体元素块级化与响应式
    注意：这里的 display: block 会覆盖上面 img 的 inline-block，
    除非有更具体的选择器。
 */
@@ -465,7 +467,7 @@ progress {
 }
 
 /* Placeholder (占位符) 样式
-   修复 Firefox 透明度问题，并设置颜色 
+   修复 Firefox 透明度问题，并设置颜色
 */
 ::placeholder {
 	opacity: 1;
@@ -476,7 +478,7 @@ progress {
 	}
 }
 
-/* Webkit 表单控件特定修饰清除 
+/* Webkit 表单控件特定修饰清除
 @media (pointer: coarse) and (hover: none) {}
 .scrollbar::-webkit-s
 */

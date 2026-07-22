@@ -3,18 +3,24 @@ import { $genSSF, $lplus, $s, xtrim } from '../../x/Functions'
 import { __GensDirectives } from './GensDirectives.js'
 import { __GensStyleIds } from './GensStyleIds.js'
 
+const _escapeBase: Record<string, string> = {
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;',
+	'"': '&quot;',
+}
+const _escapeRegex = /[&<>"']/g
+
+/** HTML 转义（' → &#39;，兼容 HTML4/5） */
 export function $escapeHTML(str?: string) {
 	if (!str) return ''
-	return str.replace(/[&<>"']/g, (match) => {
-		const escapeMap = <any>{
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#39;',
-		}
-		return escapeMap[match]
-	})
+	return str.replace(_escapeRegex, (ch) => _escapeBase[ch] || '&#39;')
+}
+
+/** XML 转义（' → &apos;，符合 XML 1.0 规范） */
+export function $escapeXML(str?: string) {
+	if (!str) return ''
+	return str.replace(_escapeRegex, (ch) => _escapeBase[ch] || '&apos;')
 }
 
 export class RainbowGen {

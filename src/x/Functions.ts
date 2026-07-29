@@ -827,64 +827,128 @@ export function $formatDate(dateInput: string | number | Date): string {
 }
 
 /**
- * 格式化数值为字符串，先放大再保留指定小数位数，并添加千分位分隔符。
+ * 格式化数值为字符串，保留指定小数位数，并添加千分位分隔符。
  *
  * 行为说明：
- * - 先将数值乘以 10^bits 进行放大。
- * - 然后使用 `toFixed(bits)` 保留指定位数的小数。
- * - 最后通过 `$formatWithCommas` 添加千分位逗号分隔符。
+ * - 使用 `toFixed(bits)` 保留指定位数的小数。
+ * - 通过 `$formatWithCommas` 添加千分位逗号分隔符。
  * - 当输入不是有效数字时返回 `'-'`。
  *
- * @param points 要格式化的数值。
- * @param bits 放大倍数的指数，同时也是小数位数，默认为 `2`。
+ * @param value 要格式化的数值（原始值，无需换算）。
+ * @param bits 小数位数，默认为 `0`。
  * @returns 返回格式化后的字符串（含千分位）；输入无效时返回 `'-'`。
  *
  * @example
- * $formatPoints(1.23, 2)   // 返回 "123.00"
- * $formatPoints(12.34, 2)  // 返回 "1,234.00"
- * $formatPoints(0.5, 3)    // 返回 "500.000"
+ * $format(1234.5, 2)   // 返回 "1,234.50"
+ * $format(1234, 0)     // 返回 "1,234"
+ */
+export function $format(value?: number, bits = 0) {
+	if (!$sc(value)) return '-'
+	return $formatWithCommas(value.toFixed(bits))
+}
+
+/**
+ * 【积分专用】格式化积分数值为字符串，并添加千分位分隔符。
+ *
+ * ⚠ 积分单位语义（重要）：
+ * - 积分系统中，底层存储的是整数 "积分"（points），前端展示的是 "单位值"（display unit）。
+ * - 换算关系：`10^bits` 个积分 = 1 个展示单位。即 `bits` 是 **单位换算指数**，不是小数位数。
+ * - 例如 `bits=2` 时：100 积分 = 1.00 展示单位，1234 积分 = 12.34 展示单位。
+ * - 例如 `bits=3` 时：1000 积分 = 1.000 展示单位，500 积分 = 0.500 展示单位。
+ * - 展示后的小数位数恰好等于 `bits`，这是换算的 **自然结果**，而非 `bits` 的定义。
+ *
+ * 行为说明：
+ * - 先将积分值乘以 `10^(-bits)` 换算为展示值，然后底层调用 `$format` 格式化。
+ * - 当输入不是有效数字时返回 `'-'`。
+ *
+ * @param points 积分值（底层原始值，整数语义）。
+ * @param bits 单位换算指数：`10^bits` 积分 = 1 展示单位，默认为 `2`（即 100 积分 = 1.00）。
+ * @returns 返回格式化后的字符串（含千分位）；输入无效时返回 `'-'`。
+ *
+ * @example
+ * $formatPoints(1234, 2)   // 100 积分 = 1.00 → 返回 "12.34"
+ * $formatPoints(123, 2)    // 返回 "1.23"
+ * $formatPoints(500, 3)    // 1000 积分 = 1.000 → 返回 "0.500"
  */
 export function $formatPoints(points?: number, bits = 2) {
 	if (!$sc(points)) return '-'
-	return $formatWithCommas((points * Math.pow(10, -bits)).toFixed(bits))
+	return $format(points * Math.pow(10, -bits), bits)
 }
 
 /**
  * 格式化数值为带符号和颜色的显示元组，并添加千分位分隔符。
  *
  * 行为说明：
- * - 先将数值乘以 10^bits 进行放大，然后使用 `toFixed(bits)` 格式化。
- * - 通过 `$formatWithCommas` 添加千分位逗号分隔符。
+ * - 使用 `toFixed(bits)` 格式化并通过 `$formatWithCommas` 添加千分位逗号分隔符。
  * - 根据数值正负自动添加符号前缀并分配对应颜色。
- * - 正数：前缀 `'+'`，颜色 `'#0a0'`（绿色）。
- * - 负数：前缀 `'-'`，颜色 `'#a00'`（红色）。
- * - 零或其他：无前缀，颜色 `'#333'`（深灰色）。
+ * - 颜色规则由 `greenUp` 参数控制：
+ *   - `greenUp = true`（默认，积分惯例）：增加→绿 `'#0a0'`，减少→红 `'#a00'`。
+ *   - `greenUp = false`（股市惯例）：增加→红 `'#a00'`，减少→绿 `'#0a0'`。
+ * - 零或无变化：无前缀，颜色 `'#333'`（深灰色）。
  * - 当输入不是有效数字时返回 `['+?', '#333']`。
  *
- * @param points 要格式化的数值。
- * @param bits 放大倍数的指数，同时也是小数位数，默认为 `2`。
+ * @param value 要格式化的数值（原始值，无需换算）。
+ * @param bits 小数位数，默认为 `0`。
+ * @param greenUp 颜色惯例：`true`=绿涨红跌（积分默认），`false`=红涨绿跌（股市）。默认 `true`。
  * @returns 返回包含显示文本（含千分位）和颜色的元组 `[display, color]`。
  *
  * @example
- * $formatPointsWithChange(1.23, 2)   // 返回 ["+123.00", "#0a0"]
- * $formatPointsWithChange(12.34, 2)  // 返回 ["+1,234.00", "#0a0"]
- * $formatPointsWithChange(-0.5, 2)   // 返回 ["-50.00", "#a00"]
- * $formatPointsWithChange(0, 2)      // 返回 ["0.00", "#333"]
+ * $formatWithChange(1234.5, 2)            // ["+1,234.50", "#0a0"] (积分惯例: 绿涨)
+ * $formatWithChange(1234.5, 2, false)     // ["+1,234.50", "#a00"] (股市惯例: 红涨)
+ * $formatWithChange(-50, 2)               // ["-50.00", "#a00"]
+ * $formatWithChange(0, 2)                 // ["0.00", "#333"]
+ */
+export function $formatWithChange(
+	value?: number,
+	bits = 0,
+	greenUp = true,
+): [display: string, color: string] {
+	if (!$sc(value)) return ['+?', '#333']
+	const up = greenUp ? '#0a0' : '#a00'
+	const down = greenUp ? '#a00' : '#0a0'
+	let color = '#333'
+	let prefix = ''
+	if (value > 0) {
+		prefix = '+'
+		color = up
+	} else if (value < 0) {
+		color = down
+	}
+	return [prefix + $formatWithCommas(value.toFixed(bits)), color]
+}
+
+/**
+ * 【积分专用】格式化积分数值为带符号和颜色的显示元组，并添加千分位分隔符。
+ *
+ * ⚠ 积分单位语义（重要）：
+ * - 积分系统中，底层存储的是整数 "积分"（points），前端展示的是 "单位值"（display unit）。
+ * - 换算关系：`10^bits` 个积分 = 1 个展示单位。即 `bits` 是 **单位换算指数**，不是小数位数。
+ * - 例如 `bits=2` 时：100 积分 = 1.00 展示单位，1234 积分 = 12.34 展示单位。
+ * - 例如 `bits=3` 时：1000 积分 = 1.000 展示单位，500 积分 = 0.500 展示单位。
+ * - 展示后的小数位数恰好等于 `bits`，这是换算的 **自然结果**，而非 `bits` 的定义。
+ *
+ * 行为说明：
+ * - 先将积分值乘以 `10^(-bits)` 换算为展示值，然后底层调用 `$formatWithChange` 格式化。
+ * - 颜色规则由 `greenUp` 参数控制（默认 `greenUp = true`，即积分惯例：增加→绿，减少→红）。
+ *
+ * @param points 积分值（底层原始值，整数语义）。
+ * @param bits 单位换算指数：`10^bits` 积分 = 1 展示单位，默认为 `2`（即 100 积分 = 1.00）。
+ * @param greenUp 颜色惯例：`true`=绿涨红跌（积分默认），`false`=红涨绿跌（股市）。默认 `true`。
+ * @returns 返回包含显示文本（含千分位）和颜色的元组 `[display, color]`。
+ *
+ * @example
+ * $formatPointsWithChange(1234, 2)           // ["+12.34", "#0a0"] (100 积分=1.00, 绿涨)
+ * $formatPointsWithChange(-500, 2)           // ["-5.00", "#a00"]
+ * $formatPointsWithChange(1234, 2, false)    // ["+12.34", "#a00"] (股市惯例: 红涨)
+ * $formatPointsWithChange(0, 2)              // ["0.00", "#333"]
  */
 export function $formatPointsWithChange(
 	points?: number,
 	bits = 2,
+	greenUp = true,
 ): [display: string, color: string] {
-	let color = '#333'
-	if (!$sc(points)) return ['+?', color]
-	let prefix = ''
-	if (points > 0) {
-		prefix = '+'
-		color = '#0a0'
-	} else if (points < 0) {
-		color = '#a00'
-	}
-	return [prefix + $formatWithCommas((points * Math.pow(10, -bits)).toFixed(bits)), color]
+	if (!$sc(points)) return ['+?', '#333']
+	return $formatWithChange(points * Math.pow(10, -bits), bits, greenUp)
 }
 
 const BYTE_UNITS = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB']

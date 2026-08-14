@@ -78,9 +78,9 @@
 .cl-dark {
 	/* 使用cl-dark切换主题 如果你想避免shadcn里dark的样式 (dark:xxx) */
 	/* Dark: 高压深蓝紫 - 优雅、神秘、高级 */
-	--xai-primary-dark: #0f172a; /* 页面大背景：深邃的午夜蓝 (Slate-900) */
+	--xai-primary-dark: #172033; /* 页面大背景：柔和的午夜蓝，避免棋盘深色格过重 */
 	--xai-primary-light: #1e293b; /* 卡片：深蓝灰 (Slate-800)，有质感 */
-	--xai-primary: #334155; /* 输入框：Slate-700，层级分明 */
+	--xai-primary: #29364a; /* 输入框：适度提亮的蓝灰，保留层级但降低棋盘反差 */
 	--xai-text: #e2e8f0; /* 文本：Slate-200，冷白 */
 	--xai-text-muted: #94a3b8; /* 次要文本：Slate-400 */
 	--xai-notable: #8b5cf6; /* 显眼色：Violet-500，高贵的深紫色，优雅且有压迫感 */
@@ -91,9 +91,9 @@
 .light,
 .cl-light {
 	/* Light: 纯白亮色 - 极致干净，高调 */
-	--xai-primary-dark: #f1f5f9; /* 页面大背景：Slate-100，比纯白稍暗，增强辨识度 */
+	--xai-primary-dark: #f0f3f7; /* 页面大背景：柔和冷白，保持与纯白卡片的层次 */
 	--xai-primary-light: #ffffff; /* 卡片：纯白，极致干净 */
-	--xai-primary: #e2e8f0; /* 输入框：Slate-200，极淡的灰 */
+	--xai-primary: #e8edf3; /* 输入框：浅蓝灰，棋盘变化更细腻但仍有内陷感 */
 	--xai-text: #020617; /* 文本：Slate-950，极致的黑 */
 	--xai-text-muted: #64748b; /* 次要文本 */
 	--xai-notable: #38bdf8; /* 显眼色：明亮的淡蓝/青色，清新通透 */

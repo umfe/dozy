@@ -163,7 +163,8 @@ body {
 	background-color: #222;
 	color: #ddd;
 }
-.dark *::selection {
+.dark *::selection,
+.cl-dark *::selection {
 	color: #222;
 	background-color: #ddd;
 }

@@ -9,19 +9,19 @@
    ======================= */
 @font-face {
 	font-family: 'xaiforfont';
-	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/assets/fonts/xaiforfont.woff2')
+	src: url('https://vres.pages.dev/v/res/assets/fonts/xaiforfont.woff2')
 		format('woff2');
 	font-display: swap;
 }
 @font-face {
 	font-family: 'xaiforcode';
-	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/assets/fonts/xaiforcode.woff2')
+	src: url('https://vres.pages.dev/v/res/assets/fonts/xaiforcode.woff2')
 		format('woff2');
 	font-display: swap;
 }
 @font-face {
 	font-family: 'xaifont';
-	src: url('https://cdn.jsdelivr.net/gh/umfe/res@main/assets/fonts/xaifont.woff2') format('woff2');
+	src: url('https://vres.pages.dev/v/res/assets/fonts/xaifont.woff2') format('woff2');
 	font-display: swap;
 }
 

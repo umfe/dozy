@@ -9,14 +9,12 @@
    ======================= */
 @font-face {
 	font-family: 'xaiforfont';
-	src: url('https://vres.pages.dev/v/res/assets/fonts/xaiforfont.woff2')
-		format('woff2');
+	src: url('https://vres.pages.dev/v/res/assets/fonts/xaiforfont.woff2') format('woff2');
 	font-display: swap;
 }
 @font-face {
 	font-family: 'xaiforcode';
-	src: url('https://vres.pages.dev/v/res/assets/fonts/xaiforcode.woff2')
-		format('woff2');
+	src: url('https://vres.pages.dev/v/res/assets/fonts/xaiforcode.woff2') format('woff2');
 	font-display: swap;
 }
 @font-face {
@@ -274,7 +272,7 @@ li {
 hr {
 	height: 0;
 	color: inherit;
-	border-top-width: 0.1em;
+	border-top-width: 0.1rem;
 }
 
 /* 缩写下划线样式 */

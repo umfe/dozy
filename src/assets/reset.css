@@ -286,7 +286,9 @@ a {
 	color: inherit;
 	text-decoration: none; /* 移除下划线 */
 	-webkit-text-decoration: inherit;
-	border: 0;
+	/* 用 border-width: 0 代替 border: 0 简写：简写会把 border-color 重置为 currentColor，
+	   导致依赖 `* { border-color: 主题色 }` 的项目里 <a> 边框意外变成文字色 */
+	border-width: 0;
 	user-select: text;
 	cursor: pointer;
 }

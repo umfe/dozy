@@ -90,10 +90,12 @@ html {
 	overflow-y: hidden; /* 防止 HTML 层滚动，通常由 Body 处理 */
 
 	line-height: 1.5; /* 1 */
-	-webkit-text-size-adjust: 100% !important;
-	-moz-text-size-adjust: 100% !important;
-	-ms-text-size-adjust: 100% !important;
-	text-size-adjust: 100% !important;
+	/* 项目使用固定设计宽度 + transform scale 自行缩放，必须彻底关闭浏览器文字膨胀，
+	   否则手机/平板 WebView 的 text autosizing 会导致同样 16px 文本换行结果不一致 */
+	-webkit-text-size-adjust: none !important;
+	-moz-text-size-adjust: none !important;
+	-ms-text-size-adjust: none !important;
+	text-size-adjust: none !important;
 	tab-size: 4; /* 3 */
 
 	/* 字体栈 */

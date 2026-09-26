@@ -9,6 +9,14 @@ on:
 permissions:
     contents: write
 
+# 串行化发布：连续 push（或 main/master 同时推）时若两个 job 并行，会各自从同一旧版本
+# bump 出相同新版本，导致其中一个 publish 因版本已存在而失败。排队执行可避免此竞争。
+# 必须 cancel-in-progress: false —— 若中途取消已 publish 但未 commit 的 run，
+# npm 上会留下无对应提交的版本，下次 bump 撞上它而卡死。
+concurrency:
+    group: publish-npm
+    cancel-in-progress: false
+
 jobs:
     publish:
         runs-on: ubuntu-latest

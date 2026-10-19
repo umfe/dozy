@@ -4,12 +4,11 @@ on:
     push:
         branches:
             - main
-            - master
 
 permissions:
     contents: write
 
-# 串行化发布：连续 push（或 main/master 同时推）时若两个 job 并行，会各自从同一旧版本
+# 串行化发布：连续 push 时若两个 job 并行，会各自从同一旧版本
 # bump 出相同新版本，导致其中一个 publish 因版本已存在而失败。排队执行可避免此竞争。
 # 必须 cancel-in-progress: false —— 若中途取消已 publish 但未 commit 的 run，
 # npm 上会留下无对应提交的版本，下次 bump 撞上它而卡死。
@@ -22,7 +21,8 @@ jobs:
         runs-on: ubuntu-latest
         if: "!contains(github.event.head_commit.message, '[skip ci]')"
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
 

@@ -20,4 +20,4 @@ export * from './modules/Singleton'
 
 export { nanoid, customAlphabet, urlAlphabet } from 'nanoid'
 
-export const DOZY = '1.0.119'
+export const DOZY = '1.0.120'

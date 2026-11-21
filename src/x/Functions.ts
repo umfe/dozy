@@ -1526,5 +1526,3 @@ export const $getHue = (json: Object) => {
 
 export const $borderColor = (json: any) => `hsl(${$getHue(json)}, 100%, 33%)`
 export const $backgroundColor = (json: any) => `hsl(${$getHue(json)}, 100%, 40%)`
-
-export const $createXRequest = () => {}

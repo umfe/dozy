@@ -9,6 +9,8 @@ export * from './modules/Interface'
 export * from './modules/gens/Gens'
 export * from './modules/gens/GensDirectives'
 export * from './modules/Color'
+export * from './modules/CreateXRequest'
+export * from './modules/Singleton'
 
 // 第三方重库已拆到独立子入口，避免命名冲突并让 tree-shake / code-splitting 更干净：
 //   lodash-es                -> 'dozy/lodash'  (含 l 命名空间)

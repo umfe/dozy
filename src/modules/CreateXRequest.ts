@@ -3,6 +3,10 @@ import { errToString, maybeString } from '../x/Functions'
 import type { Logger } from './InterTypes/InterType'
 import { $createKeyedSingleton } from './Singleton'
 
+export type CreateXRequestOption = {
+	logger?: Logger
+}
+
 export type XRequestOption = {
 	headers?: Record<string, string>
 	/** 每次请求的超时秒数，默认 300 秒，支持小数。 */
@@ -18,11 +22,12 @@ const DEFAULT_TIMEOUT_S = 5 * 60
 const REQUEST_TIMES = 13
 
 /**
- * 创建带重试的 GET 请求函数，日志交给调用方提供的 Logger。
+ * 创建带重试的 GET 请求函数，日志交给配置中可选的 Logger。
  * Logger 支持同步或异步；消息第一行是 URL，之后是请求日志。
- * 未产生日志时不调用 Logger，日志输出失败不影响请求结果。
+ * 未提供 Logger 或未产生日志时不输出，日志输出失败不影响请求结果。
  */
-export function $createXRequest(logger: Logger) {
+export function $createXRequest(options?: CreateXRequestOption) {
+	const logger = options?.logger
 	const getAxios = $createKeyedSingleton((timeoutS: number) => {
 		return axios.create({
 			timeout: timeoutS * 1000,
@@ -81,7 +86,7 @@ export function $createXRequest(logger: Logger) {
 		}
 		if (logResult && !error) log += '/' + maybeString(data, logMaxLen)
 
-		if (log) {
+		if (log && logger) {
 			// 日志是附带操作，Logger 故障不能让已完成的请求向上抛错。
 			try {
 				await logger(`${url}\n${log}`)

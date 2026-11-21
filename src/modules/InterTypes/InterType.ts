@@ -9,9 +9,9 @@ export type Null = undefined | null | void
  * - `undefined`
  * - `void 0`
  *
-	 * @typeParam T 原始候选类型。
-	 * @param v 要检测的值。
-	 * @returns 当 `v` 是 `null` 或 `undefined` 时返回 `true`，否则返回 `false`。
+ * @typeParam T 原始候选类型。
+ * @param v 要检测的值。
+ * @returns 当 `v` 是 `null` 或 `undefined` 时返回 `true`，否则返回 `false`。
  */
 export function isNull<T>(v: T | Null): v is Null {
 	return v === null || v === undefined || v === void 0
@@ -25,3 +25,5 @@ export type Coord = [number, number]
 export type Coord3 = [number, number, number]
 export type IOpt = Object | undefined
 export type Atoa<T> = (i: T) => T
+
+export type Logger = (msg: string) => void | Promise<void>

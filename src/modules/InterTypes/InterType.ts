@@ -26,4 +26,4 @@ export type Coord3 = [number, number, number]
 export type IOpt = Object | undefined
 export type Atoa<T> = (i: T) => T
 
-export type Logger = (msg: string) => void | Promise<void>
+export type Logger = (...args: string[]) => void | Promise<void>

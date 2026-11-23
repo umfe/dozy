@@ -1,6 +1,7 @@
 name: Publish to NPM
 
 on:
+    workflow_dispatch:
     push:
         branches:
             - main
@@ -8,10 +9,6 @@ on:
 permissions:
     contents: write
 
-# 串行化发布：连续 push 时若两个 job 并行，会各自从同一旧版本
-# bump 出相同新版本，导致其中一个 publish 因版本已存在而失败。排队执行可避免此竞争。
-# 必须 cancel-in-progress: false —— 若中途取消已 publish 但未 commit 的 run，
-# npm 上会留下无对应提交的版本，下次 bump 撞上它而卡死。
 concurrency:
     group: publish-npm
     cancel-in-progress: false
@@ -19,7 +16,7 @@ concurrency:
 jobs:
     publish:
         runs-on: ubuntu-latest
-        if: "!contains(github.event.head_commit.message, '[skip ci]')"
+        if: "github.ref_name == 'main' && !contains(github.event.head_commit.message, '[skip ci]')"
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -29,8 +26,10 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: '20'
+                  node-version: '22'
                   registry-url: 'https://registry.npmjs.org'
+                  cache: 'npm'
+                  cache-dependency-path: 'package-lock.json'
 
             - name: Install dependencies
               run: npm ci
@@ -40,8 +39,8 @@ jobs:
               run: |
                   node scripts/bump-version.js
                   npm install --package-lock-only --ignore-scripts
+                  echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-            # 不再显式 build：npm publish 会自动触发 package.json 里的 prepublishOnly 钩子完成构建
             - name: Publish to NPM
               run: |
                   if [ -z "$NODE_AUTH_TOKEN" ]; then
@@ -58,4 +57,3 @@ jobs:
                   commit_message: 'chore: release v${{ steps.bump.outputs.version }} [skip ci]'
                   branch: ${{ github.ref_name }}
                   file_pattern: 'package.json src/index.ts package-lock.json'
-                  # tagging_message: 'v${{ steps.bump.outputs.version }}'

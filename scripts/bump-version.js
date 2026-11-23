@@ -48,11 +48,6 @@ try {
         process.exit(1);
     }
 
-    // Export the new version to GitHub Actions step output (steps.<id>.outputs.version)
-    if (process.env.GITHUB_OUTPUT) {
-        fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${newVersion}\n`);
-    }
-
 } catch (error) {
     console.error('Error bumping version:', error);
     process.exit(1);
